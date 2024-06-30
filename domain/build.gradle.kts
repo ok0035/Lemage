@@ -1,3 +1,4 @@
+import Libs.PAGING
 import Libs.androidTestImplementations
 import Libs.implementations
 import Libs.kaptAndroidTests
@@ -52,7 +53,8 @@ dependencies {
     implementations(
         listOf(
             Libs.CORE_KTX,
-            Libs.HILT
+            Libs.HILT,
+            PAGING
         )
     )
 
@@ -65,7 +67,8 @@ dependencies {
     testImplementations(
         listOf(
             Libs.JUNIT,
-            Libs.HILT_ANDROID_TEST
+            Libs.HILT_ANDROID_TEST,
+            Libs.PAGING_TEST
         )
     )
 

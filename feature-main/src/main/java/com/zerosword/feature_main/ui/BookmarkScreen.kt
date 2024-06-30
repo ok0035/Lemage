@@ -7,9 +7,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.zerosword.feature_main.viewmodel.MainViewModel
 
 @Composable
-fun BookmarkScreen() {
+fun BookmarkScreen(viewModel: MainViewModel = hiltViewModel()) {
+
     Box(modifier = Modifier
         .background(MaterialTheme.colorScheme.background)
         .fillMaxSize()

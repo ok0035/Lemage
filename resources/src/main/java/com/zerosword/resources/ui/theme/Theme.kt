@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 val LightColorScheme = lightColorScheme(
     primary = Color.White,
     onPrimary = Color.Black,
-    secondary = Color(0xFFD3E4CD), // 파스텔 톤의 Secondary 색상
+    secondary = Color(0xFFE0E0E0), // 파스텔 톤의 Secondary 색상
     onSecondary = Color.Black,
     tertiary = Color(0xFFFF6F61), // 밝은 느낌의 Red
     onTertiary = Color.White,
