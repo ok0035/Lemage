@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,17 +37,19 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.zerosword.resources.R.*
 
 @Composable
 fun MainView(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
 ) {
 
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val isInEditMode = LocalInspectionMode.current
 
     MainTheme(
-        darkTheme
+        isDarkTheme
     ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -55,51 +58,63 @@ fun MainView(
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
                 val (topBarRef, contentsRef, bottomBarRef) = createRefs()
-                val topBarHeight = dimensionResource(
-                    id = com.zerosword.resources.R.dimen.top_bar_height
-                )
+                val topBarHeight = dimensionResource(id = dimen.top_bar_height)
 
                 Box(
-                    modifier = Modifier.constrainAs(topBarRef) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        top.linkTo(parent.top)
-
-                        height = Dimension.value(topBarHeight)
-                    },
+                    modifier = Modifier
+                        .constrainAs(topBarRef) {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            top.linkTo(parent.top)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.value(topBarHeight)
+                        }
+                        .background(colorScheme.primary),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = currentBackStackEntry?.destination?.route ?: "")
+                    Text(
+                        modifier = Modifier,
+                        text = currentBackStackEntry?.destination?.route ?: "",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = colorScheme.onPrimary
+                        )
+                    )
                 }
 
                 Box(
-                    modifier = Modifier.constrainAs(contentsRef) {
+                    modifier = Modifier
+                        .constrainAs(contentsRef) {
 
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        top.linkTo(topBarRef.bottom)
-                        bottom.linkTo(bottomBarRef.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            top.linkTo(topBarRef.bottom)
+                            bottom.linkTo(bottomBarRef.top)
 
-                        width = Dimension.fillToConstraints
-                        height = Dimension.fillToConstraints
-                    },
+                            width = Dimension.fillToConstraints
+                            height = Dimension.fillToConstraints
+                        }
+                        .background(colorScheme.background),
                 ) {
-                    NavigationGraph(navController = navController)
+                    if (!isInEditMode)
+                        NavigationGraph(
+                            modifier = Modifier.fillMaxSize(),
+                            navController = navController,
+                        )
                 }
 
                 Box(
-                    modifier = Modifier.constrainAs(bottomBarRef) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom)
-                    }
+                    modifier = Modifier
+                        .constrainAs(bottomBarRef) {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
+                        }
+                        .background(colorScheme.secondary)
                 ) {
                     BottomBar(navController = navController)
                 }
-
             }
         }
-
     }
 }
 
@@ -111,33 +126,49 @@ fun TopBar(title: String) {
 @Composable
 fun BottomBar(navController: NavHostController) {
     val context = LocalContext.current
-    val searchTitle = context.getString(com.zerosword.resources.R.string.search_screen_title)
-    val bookmarkTitle = context.getString(com.zerosword.resources.R.string.bookmark_screen_title)
-    val height = dimensionResource(id = com.zerosword.resources.R.dimen.bottom_bar_height)
+    val searchTitle = context.getString(string.search_screen_title)
+    val bookmarkTitle = context.getString(string.bookmark_screen_title)
+    val height = dimensionResource(id = dimen.bottom_bar_height)
 
     val items = listOf(searchTitle, bookmarkTitle)
 
-    NavigationBar(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(height)
     ) {
-        items.forEach { screen ->
 
-            val icon = when (screen) {
-                searchTitle -> Icons.Rounded.Search
-                bookmarkTitle -> Icons.Rounded.Favorite
-                else -> Icons.Rounded.Search
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(colorScheme.secondary)
+        )
+
+        NavigationBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            items.forEach { screen ->
+
+                val icon = when (screen) {
+                    searchTitle -> Icons.Rounded.Search
+                    bookmarkTitle -> Icons.Rounded.Favorite
+                    else -> Icons.Rounded.Search
+                }
+
+                BottomTabItem(
+                    modifier = Modifier,
+                    navController = navController,
+                    destScreen = screen,
+                    icon = icon
+                ) { navController.navigate(screen) }
+
             }
-
-            BottomTabItem(
-                navController = navController,
-                destScreen = screen,
-                icon = icon
-            ) { navController.navigate(screen) }
-
         }
     }
+
 }
 
 @Composable
@@ -181,16 +212,16 @@ fun RowScope.BottomTabItem(
                     .align(Alignment.CenterHorizontally),
                 imageVector = icon,
                 contentDescription = null,
-                tint = when(isSelected) {
-                    true -> colorScheme.secondary
-                    else -> colorScheme.tertiary
+                tint = when (isSelected) {
+                    true -> colorScheme.tertiary
+                    else -> colorScheme.onSecondary
                 }
             )
             Spacer(modifier.height(2.dp))
             Text(
                 text = destScreen,
                 style = MaterialTheme.typography.labelLarge.copy(
-                    color = if (isSelected) colorScheme.secondary else colorScheme.tertiary
+                    color = if (isSelected) colorScheme.tertiary else colorScheme.onSecondary
                 )
             )
         }
@@ -205,7 +236,7 @@ fun RowScope.BottomTabItem(
                         width = Dimension.fillToConstraints
                         height = Dimension.value(4.dp)
                     }
-                    .background(colorScheme.secondary)
+                    .background(colorScheme.tertiary)
             )
     }
 }
@@ -214,12 +245,7 @@ fun RowScope.BottomTabItem(
 @Preview(showBackground = true)
 @Composable
 fun MainPreview() {
-    MainTheme() {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = colorScheme.background,
-        ) {
-            MainView()
-        }
+    MainTheme {
+        MainView(true)
     }
 }

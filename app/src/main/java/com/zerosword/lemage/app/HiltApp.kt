@@ -1,4 +1,4 @@
-package com.zerosword.template.app
+package com.zerosword.lemage.app
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

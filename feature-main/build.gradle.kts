@@ -80,10 +80,11 @@ dependencies {
             Libs.COMPOSE_UI_FOR_CONSTRAINT,
             Libs.COMPOSE_UI_TOOLING_PREVIEW,
             Libs.MATERIAL3,
-            Libs.GLIDE,
-            Libs.GLIDE_FOR_COMPOSE,
+            Libs.COIL,
             Libs.HILT,
-            Libs.HILT_FOR_COMPOSE
+            Libs.HILT_FOR_COMPOSE,
+            Libs.PAGING,
+            Libs.PAGING_FOR_COMPOSE
         )
     )
 
@@ -100,7 +101,8 @@ dependencies {
         listOf(
             Libs.JUNIT,
             Libs.OK_HTTP_MOCK_WEB_SERVER,
-            Libs.HILT_ANDROID_TEST
+            Libs.HILT_ANDROID_TEST,
+            Libs.PAGING_TEST
         )
     )
 

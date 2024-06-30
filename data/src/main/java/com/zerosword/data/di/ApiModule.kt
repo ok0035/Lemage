@@ -1,6 +1,6 @@
 package com.zerosword.data.di
 
-import com.zerosword.data.services.MainService
+import com.zerosword.data.services.KakaoService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +14,7 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideMainServices(retrofit: Retrofit): MainService =
-        retrofit.create(MainService::class.java)
+    fun provideMainServices(retrofit: Retrofit): KakaoService =
+        retrofit.create(KakaoService::class.java)
 
 }

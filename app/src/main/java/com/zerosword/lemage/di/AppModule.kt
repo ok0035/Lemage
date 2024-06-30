@@ -1,4 +1,4 @@
-package com.zerosword.template.di
+package com.zerosword.lemage.di
 
 import android.content.Context
 import dagger.Module
