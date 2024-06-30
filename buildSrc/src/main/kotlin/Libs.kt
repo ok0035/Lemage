@@ -26,7 +26,7 @@ object Libs {
         "com.github.skydoves:sandwich-retrofit:$SANDWICH_VER" // For Retrofit
 
     //Hilt
-    private const val HILT_VER = "2.51"
+    const val HILT_VER = "2.51"
     const val HILT = "com.google.dagger:hilt-android:$HILT_VER"
     const val HILT_COMPILER = "com.google.dagger:hilt-compiler:$HILT_VER"
     const val HILT_ANDROID_TEST = "com.google.dagger:hilt-android-testing:$HILT_VER"
@@ -41,6 +41,7 @@ object Libs {
     const val COMPOSE_UI_TEST_JUNIT = "androidx.compose.ui:ui-test-junit4"
     const val COMPOSE_UI_TOOLING = "androidx.compose.ui:ui-tooling"
     const val COMPOSE_UI_TEST_MANIFEST = "androidx.compose.ui:ui-test-manifest"
+    const val COMPOSE_UI_FOR_CONSTRAINT = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     //Image
     const val GLIDE = "com.github.bumptech.glide:glide:4.14.2" // lib + kapt

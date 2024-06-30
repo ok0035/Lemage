@@ -44,14 +44,14 @@ android {
         targetCompatibility = AppConfig.javaVersion
     }
     kotlinOptions {
-        jvmTarget = AppConfig.jvmTargetVer
+        jvmTarget = AppConfig.JVM_TARGET_VER
     }
     buildFeatures {
         compose = true
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = AppConfig.kotlinCompilerExtVer
+        kotlinCompilerExtensionVersion = AppConfig.KOTLIN_COMPILER_EXT_VER
     }
     packaging {
         resources {

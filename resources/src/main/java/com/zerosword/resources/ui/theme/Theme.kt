@@ -2,25 +2,30 @@ package com.zerosword.resources.ui.theme
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
-
-val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
+import androidx.compose.ui.graphics.Color
 
 val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Color.White,
+    secondary = Color.Red,
+    tertiary = Color.Black,
+    onPrimary = Color.Black,  // primary 배경 위의 텍스트 색상
+    onSecondary = Color.White,  // secondary 배경 위의 텍스트 색상
+    onTertiary = Color.White,  // tertiary 배경 위의 텍스트 색상
+    background = Color.White,
+    surface = Color.White,
+    onBackground = Color.Black,
+    onSurface = Color.Black
+)
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+val DarkColorScheme = darkColorScheme(
+    primary = Color.Black,
+    secondary = Color(0xFF8B0000),  // Dark Red
+    tertiary = Color.LightGray,
+    onPrimary = Color.White,  // primary 배경 위의 텍스트 색상
+    onSecondary = Color.White,  // secondary 배경 위의 텍스트 색상
+    onTertiary = Color.Black,  // tertiary 배경 위의 텍스트 색상
+    background = Color.Black,
+    surface = Color.DarkGray,
+    onBackground = Color.White,
+    onSurface = Color.White
 )

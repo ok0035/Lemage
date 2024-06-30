@@ -38,14 +38,14 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = AppConfig.kotlinCompilerExtVer
+        kotlinCompilerExtensionVersion = AppConfig.KOTLIN_COMPILER_EXT_VER
     }
     compileOptions {
         sourceCompatibility = AppConfig.javaVersion
         targetCompatibility = AppConfig.javaVersion
     }
     kotlinOptions {
-        jvmTarget = AppConfig.jvmTargetVer
+        jvmTarget = AppConfig.JVM_TARGET_VER
     }
 }
 
@@ -77,6 +77,7 @@ dependencies {
             Libs.ACTIVITY_COMPOSE,
             Libs.COMPOSE_UI,
             Libs.COMPOSE_UI_GRAPHICS,
+            Libs.COMPOSE_UI_FOR_CONSTRAINT,
             Libs.COMPOSE_UI_TOOLING_PREVIEW,
             Libs.MATERIAL3,
             Libs.GLIDE,

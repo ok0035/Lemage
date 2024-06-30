@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="empty_result_msg">There are no search results. Please try searching with different keywords.</string>
+    <string name="network_error_msg">A network error has occurred. Please try again later.</string>
+    <string name="search_screen_title">Search</string>
+    <string name="bookmark_screen_title">Bookmark</string>
+</resources>
