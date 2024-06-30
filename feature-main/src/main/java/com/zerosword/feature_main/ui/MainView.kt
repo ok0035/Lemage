@@ -39,14 +39,14 @@ import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun MainView(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
 ) {
 
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
     MainTheme(
-        darkTheme
+        isDarkTheme
     ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -60,39 +60,51 @@ fun MainView(
                 )
 
                 Box(
-                    modifier = Modifier.constrainAs(topBarRef) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        top.linkTo(parent.top)
-
-                        height = Dimension.value(topBarHeight)
-                    },
+                    modifier = Modifier
+                        .constrainAs(topBarRef) {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            top.linkTo(parent.top)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.value(topBarHeight)
+                        }
+                        .background(colorScheme.primary),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = currentBackStackEntry?.destination?.route ?: "")
+                    Text(
+                        modifier = Modifier,
+                        text = currentBackStackEntry?.destination?.route ?: "",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = colorScheme.onPrimary
+                        )
+                    )
                 }
 
                 Box(
-                    modifier = Modifier.constrainAs(contentsRef) {
+                    modifier = Modifier
+                        .constrainAs(contentsRef) {
 
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        top.linkTo(topBarRef.bottom)
-                        bottom.linkTo(bottomBarRef.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            top.linkTo(topBarRef.bottom)
+                            bottom.linkTo(bottomBarRef.top)
 
-                        width = Dimension.fillToConstraints
-                        height = Dimension.fillToConstraints
-                    },
+                            width = Dimension.fillToConstraints
+                            height = Dimension.fillToConstraints
+                        }
+                        .background(colorScheme.background),
                 ) {
                     NavigationGraph(navController = navController)
                 }
 
                 Box(
-                    modifier = Modifier.constrainAs(bottomBarRef) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom)
-                    }
+                    modifier = Modifier
+                        .constrainAs(bottomBarRef) {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
+                        }
+                        .background(colorScheme.secondary)
                 ) {
                     BottomBar(navController = navController)
                 }
@@ -121,6 +133,7 @@ fun BottomBar(navController: NavHostController) {
         modifier = Modifier
             .fillMaxWidth()
             .height(height)
+            .background(colorScheme.secondary)
     ) {
         items.forEach { screen ->
 
@@ -131,6 +144,7 @@ fun BottomBar(navController: NavHostController) {
             }
 
             BottomTabItem(
+                modifier = Modifier,
                 navController = navController,
                 destScreen = screen,
                 icon = icon
@@ -181,16 +195,16 @@ fun RowScope.BottomTabItem(
                     .align(Alignment.CenterHorizontally),
                 imageVector = icon,
                 contentDescription = null,
-                tint = when(isSelected) {
-                    true -> colorScheme.secondary
-                    else -> colorScheme.tertiary
+                tint = when (isSelected) {
+                    true -> colorScheme.tertiary
+                    else -> colorScheme.onSecondary
                 }
             )
             Spacer(modifier.height(2.dp))
             Text(
                 text = destScreen,
                 style = MaterialTheme.typography.labelLarge.copy(
-                    color = if (isSelected) colorScheme.secondary else colorScheme.tertiary
+                    color = if (isSelected) colorScheme.tertiary else colorScheme.onSecondary
                 )
             )
         }
@@ -205,7 +219,7 @@ fun RowScope.BottomTabItem(
                         width = Dimension.fillToConstraints
                         height = Dimension.value(4.dp)
                     }
-                    .background(colorScheme.secondary)
+                    .background(colorScheme.tertiary)
             )
     }
 }
