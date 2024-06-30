@@ -14,11 +14,11 @@ plugins {
 }
 
 android {
-    namespace = "com.zerosword.template"
+    namespace = "com.zerosword.lemage"
     compileSdk = AppConfig.COMPILE_SDK_VER
 
     defaultConfig {
-        applicationId = "com.zerosword.template"
+        applicationId = "com.zerosword.lemage"
         minSdk = AppConfig.MIN_SDK_VER
         targetSdk = AppConfig.TARGET_SDK_VER
         versionCode = AppConfig.VERSION_CODE
