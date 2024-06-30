@@ -13,6 +13,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val mainRepository: MainRepository
 ) : ViewModel() {
+
     private val _mainMessage: MutableStateFlow<String> = MutableStateFlow("API CALLING...")
     val mainMessage: StateFlow<String> get() = _mainMessage
 

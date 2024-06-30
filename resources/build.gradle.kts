@@ -40,11 +40,11 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = AppConfig.kotlinCompilerExtVer
+        kotlinCompilerExtensionVersion = AppConfig.KOTLIN_COMPILER_EXT_VER
     }
 
     kotlinOptions {
-        jvmTarget = AppConfig.jvmTargetVer
+        jvmTarget = AppConfig.JVM_TARGET_VER
     }
 }
 

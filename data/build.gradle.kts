@@ -52,7 +52,7 @@ android {
         targetCompatibility = AppConfig.javaVersion
     }
     kotlinOptions {
-        jvmTarget = AppConfig.jvmTargetVer
+        jvmTarget = AppConfig.JVM_TARGET_VER
     }
 }
 
