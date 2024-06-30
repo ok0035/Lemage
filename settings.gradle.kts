@@ -13,7 +13,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Template"
+rootProject.name = "Lemage"
 include(":app")
 include(":domain")
 include(":data")
