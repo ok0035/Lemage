@@ -1,4 +1,4 @@
-package com.zerosword.template
+package com.zerosword.lemage
 
 import org.junit.Test
 
