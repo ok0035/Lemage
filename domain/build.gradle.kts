@@ -13,10 +13,10 @@ plugins {
 
 android {
     namespace = "com.zerosword.domain"
-    compileSdk = AppConfig.compileSdkVer
+    compileSdk = AppConfig.COMPILE_SDK_VER
 
     defaultConfig {
-        minSdk = AppConfig.minSdkVer
+        minSdk = AppConfig.MIN_SDK_VER
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -51,35 +51,35 @@ dependencies {
 
     implementations(
         listOf(
-            Libs.coreKtx,
-            Libs.hilt
+            Libs.CORE_KTX,
+            Libs.HILT
         )
     )
 
     kapts(
         listOf(
-            Libs.hiltCompiler
+            Libs.HILT_COMPILER
         )
     )
 
     testImplementations(
         listOf(
-            Libs.junit,
-            Libs.hiltAndroidTest
+            Libs.JUNIT,
+            Libs.HILT_ANDROID_TEST
         )
     )
 
     androidTestImplementations(
         listOf(
-            Libs.androidxTestJunit,
-            Libs.androidxEspressoCore,
-            Libs.hiltAndroidTest
+            Libs.ANDROIDX_TEST_JUNIT,
+            Libs.ANDROIDX_ESPRESSO_CORE,
+            Libs.HILT_ANDROID_TEST
         )
     )
 
     kaptAndroidTests(
         listOf(
-            Libs.hiltCompiler
+            Libs.HILT_COMPILER
         )
     )
 }

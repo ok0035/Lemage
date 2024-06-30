@@ -15,10 +15,10 @@ plugins {
 
 android {
     namespace = "com.zerosword.feature_main"
-    compileSdk = AppConfig.compileSdkVer
+    compileSdk = AppConfig.COMPILE_SDK_VER
 
     defaultConfig {
-        minSdk = AppConfig.minSdkVer
+        minSdk = AppConfig.MIN_SDK_VER
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -60,69 +60,69 @@ dependencies {
             project(":data"),
             project(":domain"),
             project(":resources"),
-            platform(Libs.composeBom),
-            platform(Libs.okHttpClientBom),
-            Libs.coreKtx,
-            Libs.lifecycleRuntimeKtx,
-            Libs.lifecycleForCompose,
-            Libs.lifecycleService,
-            Libs.viewModel,
-            Libs.viewModelForCompose,
-            Libs.viewModelForSavedState,
-            Libs.retrofit,
-            Libs.okHttpClient,
-            Libs.okHttpInterceptor,
-            Libs.sandwich,
-            Libs.sandwichForRetrofit,
-            Libs.activityCompose,
-            Libs.composeUi,
-            Libs.composeUiGraphics,
-            Libs.composeUiToolingPreview,
-            Libs.material3,
-            Libs.glide,
-            Libs.glideForCompose,
-            Libs.hilt,
-            Libs.hiltForCompose
+            platform(Libs.COMPOSE_BOM),
+            platform(Libs.OK_HTTP_CLIENT_BOM),
+            Libs.CORE_KTX,
+            Libs.LIFECYCLE_RUNTIME_KTX,
+            Libs.LIFECYCLE_FOR_COMPOSE,
+            Libs.LIFECYCLE_SERVICE,
+            Libs.VIEWMODEL,
+            Libs.VIEWMODEL_FOR_COMPOSE,
+            Libs.VIEWMODEL_FOR_SAVED_STATE,
+            Libs.RETROFIT,
+            Libs.OK_HTTP_CLIENT,
+            Libs.OK_HTTP_INTERCEPTOR,
+            Libs.SANDWICH,
+            Libs.SANDWICH_FOR_RETROFIT,
+            Libs.ACTIVITY_COMPOSE,
+            Libs.COMPOSE_UI,
+            Libs.COMPOSE_UI_GRAPHICS,
+            Libs.COMPOSE_UI_TOOLING_PREVIEW,
+            Libs.MATERIAL3,
+            Libs.GLIDE,
+            Libs.GLIDE_FOR_COMPOSE,
+            Libs.HILT,
+            Libs.HILT_FOR_COMPOSE
         )
     )
 
     kapts(
         listOf(
-            Libs.hiltCompiler,
-            Libs.lifecycleCompiler,
-            Libs.glide
+            Libs.HILT_COMPILER,
+            Libs.LIFECYCLE_COMPILER,
+            Libs.GLIDE
         )
     )
-    kaptTests(listOf(Libs.hiltCompiler))
+    kaptTests(listOf(Libs.HILT_COMPILER))
 
     testImplementations(
         listOf(
-            Libs.junit,
-            Libs.okHttpMockWebServer,
-            Libs.hiltAndroidTest
+            Libs.JUNIT,
+            Libs.OK_HTTP_MOCK_WEB_SERVER,
+            Libs.HILT_ANDROID_TEST
         )
     )
 
     androidTestImplementations(
         listOf(
-            platform(Libs.composeBom),
-            Libs.androidxTestJunit,
-            Libs.androidxEspressoCore,
-            Libs.composeUiTestJunit,
-            Libs.hiltAndroidTest
+            platform(Libs.COMPOSE_BOM),
+            Libs.ANDROIDX_TEST_JUNIT,
+            Libs.ANDROIDX_ESPRESSO_CORE,
+            Libs.COMPOSE_UI_TEST_JUNIT,
+            Libs.HILT_ANDROID_TEST
         )
     )
 
     kaptAndroidTests(
         listOf(
-            Libs.hiltCompiler
+            Libs.HILT_COMPILER
         )
     )
 
     debugImplementations(
         listOf(
-            Libs.composeUiTooling,
-            Libs.composeUiTestManifest
+            Libs.COMPOSE_UI_TOOLING,
+            Libs.COMPOSE_UI_TEST_MANIFEST
         )
     )
 }

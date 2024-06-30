@@ -2,65 +2,66 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 
 object Libs {
 
-    const val coreKtx = "androidx.core:core-ktx:1.12.0"
+    const val CORE_KTX = "androidx.core:core-ktx:1.12.0"
 
     //Retrofit
-    private const val retrofitVer = "2.10.0"
-    const val retrofit = "com.squareup.retrofit2:retrofit:$retrofitVer"
-    const val retrofitGsonConverter = "com.squareup.retrofit2:converter-gson:$retrofitVer"
+    private const val RETROFIT_VER = "2.10.0"
+    const val RETROFIT = "com.squareup.retrofit2:retrofit:$RETROFIT_VER"
+    const val RETROFIT_GSON_CONVERTER = "com.squareup.retrofit2:converter-gson:$RETROFIT_VER"
 
     //OkHttpClient
-    private const val okHttpClientVer = "4.12.0"
-    const val okHttpClientBom = "com.squareup.okhttp3:okhttp-bom:$okHttpClientVer"
-    const val okHttpClient = "com.squareup.okhttp3:okhttp"
-    const val okHttpInterceptor = "com.squareup.okhttp3:logging-interceptor"
-    const val okHttpMockWebServer = "com.squareup.okhttp3:mockwebserver:$okHttpClientVer"
+    private const val OK_HTTP_CLIENT_VER = "4.12.0"
+    const val OK_HTTP_CLIENT_BOM = "com.squareup.okhttp3:okhttp-bom:$OK_HTTP_CLIENT_VER"
+    const val OK_HTTP_CLIENT = "com.squareup.okhttp3:okhttp"
+    const val OK_HTTP_INTERCEPTOR = "com.squareup.okhttp3:logging-interceptor"
+    const val OK_HTTP_MOCK_WEB_SERVER = "com.squareup.okhttp3:mockwebserver:$OK_HTTP_CLIENT_VER"
 
     //Gson
-    const val gson = "com.google.code.gson:gson:2.10.1"
+    const val GSON = "com.google.code.gson:gson:2.10.1"
 
     //Sandwich
-    private const val sandwichVer = "2.0.6"
-    const val sandwich = "com.github.skydoves:sandwich:$sandwichVer"
-    const val sandwichForRetrofit =
-        "com.github.skydoves:sandwich-retrofit:$sandwichVer" // For Retrofit
+    private const val SANDWICH_VER = "2.0.6"
+    const val SANDWICH = "com.github.skydoves:sandwich:$SANDWICH_VER"
+    const val SANDWICH_FOR_RETROFIT =
+        "com.github.skydoves:sandwich-retrofit:$SANDWICH_VER" // For Retrofit
 
     //Hilt
-    const val hiltVer = "2.51"
-    const val hilt = "com.google.dagger:hilt-android:$hiltVer"
-    const val hiltCompiler = "com.google.dagger:hilt-compiler:$hiltVer"
-    const val hiltAndroidTest = "com.google.dagger:hilt-android-testing:$hiltVer"
-    const val hiltForCompose = "androidx.hilt:hilt-navigation-compose:1.0.0"
+    private const val HILT_VER = "2.51"
+    const val HILT = "com.google.dagger:hilt-android:$HILT_VER"
+    const val HILT_COMPILER = "com.google.dagger:hilt-compiler:$HILT_VER"
+    const val HILT_ANDROID_TEST = "com.google.dagger:hilt-android-testing:$HILT_VER"
+    const val HILT_FOR_COMPOSE = "androidx.hilt:hilt-navigation-compose:1.0.0"
 
     //Compose
-    const val activityCompose = "androidx.activity:activity-compose:1.8.2"
-    const val composeBom = "androidx.compose:compose-bom:2023.08.00"
-    const val composeUi = "androidx.compose.ui:ui"
-    const val composeUiGraphics = "androidx.compose.ui:ui-graphics"
-    const val composeUiToolingPreview = "androidx.compose.ui:ui-tooling-preview"
-    const val composeUiTestJunit = "androidx.compose.ui:ui-test-junit4"
-    const val composeUiTooling = "androidx.compose.ui:ui-tooling"
-    const val composeUiTestManifest = "androidx.compose.ui:ui-test-manifest"
+    const val ACTIVITY_COMPOSE = "androidx.activity:activity-compose:1.8.2"
+    const val COMPOSE_BOM = "androidx.compose:compose-bom:2023.08.00"
+    const val COMPOSE_UI = "androidx.compose.ui:ui"
+    const val COMPOSE_UI_GRAPHICS = "androidx.compose.ui:ui-graphics"
+    const val COMPOSE_UI_TOOLING_PREVIEW = "androidx.compose.ui:ui-tooling-preview"
+    const val COMPOSE_UI_TEST_JUNIT = "androidx.compose.ui:ui-test-junit4"
+    const val COMPOSE_UI_TOOLING = "androidx.compose.ui:ui-tooling"
+    const val COMPOSE_UI_TEST_MANIFEST = "androidx.compose.ui:ui-test-manifest"
 
     //Image
-    const val glide = "com.github.bumptech.glide:glide:4.14.2" // lib + kapt
-    const val glideForCompose = "com.github.bumptech.glide:compose:1.0.0-beta01"
+    const val GLIDE = "com.github.bumptech.glide:glide:4.14.2" // lib + kapt
+    const val GLIDE_FOR_COMPOSE = "com.github.bumptech.glide:compose:1.0.0-beta01"
+    const val COIL = "io.coil-kt:coil-compose:2.6.0"
 
     //Test
-    const val material3 = "androidx.compose.material3:material3"
-    const val junit = "junit:junit:4.13.2"
-    const val androidxTestJunit = "androidx.test.ext:junit:1.1.5"
-    const val androidxEspressoCore = "androidx.test.espresso:espresso-core:3.5.1"
+    const val MATERIAL3 = "androidx.compose.material3:material3"
+    const val JUNIT = "junit:junit:4.13.2"
+    const val ANDROIDX_TEST_JUNIT = "androidx.test.ext:junit:1.1.5"
+    const val ANDROIDX_ESPRESSO_CORE = "androidx.test.espresso:espresso-core:3.5.1"
 
     //Lifecycle
-    private const val lifecycleVer = "2.7.0"
-    const val viewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVer"
-    const val viewModelForCompose = "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVer"
-    const val lifecycleForCompose = "androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVer"
-    const val viewModelForSavedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycleVer"
-    const val lifecycleCompiler = "androidx.lifecycle:lifecycle-compiler:$lifecycleVer"
-    const val lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVer"
-    const val lifecycleService = "androidx.lifecycle:lifecycle-service:$lifecycleVer"
+    private const val LIFECYCLE_VER = "2.7.0"
+    const val VIEWMODEL = "androidx.lifecycle:lifecycle-viewmodel-ktx:$LIFECYCLE_VER"
+    const val VIEWMODEL_FOR_COMPOSE = "androidx.lifecycle:lifecycle-viewmodel-compose:$LIFECYCLE_VER"
+    const val LIFECYCLE_FOR_COMPOSE = "androidx.lifecycle:lifecycle-runtime-compose:$LIFECYCLE_VER"
+    const val VIEWMODEL_FOR_SAVED_STATE = "androidx.lifecycle:lifecycle-viewmodel-savedstate:$LIFECYCLE_VER"
+    const val LIFECYCLE_COMPILER = "androidx.lifecycle:lifecycle-compiler:$LIFECYCLE_VER"
+    const val LIFECYCLE_RUNTIME_KTX = "androidx.lifecycle:lifecycle-runtime-ktx:$LIFECYCLE_VER"
+    const val LIFECYCLE_SERVICE = "androidx.lifecycle:lifecycle-service:$LIFECYCLE_VER"
 
     fun DependencyHandler.kapts(list: List<String>) {
         list.forEach { dependency ->

@@ -13,10 +13,10 @@ plugins {
 
 android {
     namespace = "com.zerosword.data"
-    compileSdk = AppConfig.compileSdkVer
+    compileSdk = AppConfig.COMPILE_SDK_VER
 
     defaultConfig {
-        minSdk = AppConfig.minSdkVer
+        minSdk = AppConfig.MIN_SDK_VER
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -65,43 +65,43 @@ dependencies {
     implementations(
         listOf(
             project(":domain"),
-            platform(Libs.okHttpClientBom),
-            Libs.gson,
-            Libs.coreKtx,
-            Libs.retrofit,
-            Libs.retrofitGsonConverter,
-            Libs.okHttpClient,
-            Libs.okHttpInterceptor,
-            Libs.sandwich,
-            Libs.sandwichForRetrofit,
-            Libs.hilt
+            platform(Libs.OK_HTTP_CLIENT_BOM),
+            Libs.GSON,
+            Libs.CORE_KTX,
+            Libs.RETROFIT,
+            Libs.RETROFIT_GSON_CONVERTER,
+            Libs.OK_HTTP_CLIENT,
+            Libs.OK_HTTP_INTERCEPTOR,
+            Libs.SANDWICH,
+            Libs.SANDWICH_FOR_RETROFIT,
+            Libs.HILT
         )
     )
     testImplementations(
         listOf(
-            Libs.junit,
-            Libs.okHttpMockWebServer,
-            Libs.hiltAndroidTest
+            Libs.JUNIT,
+            Libs.OK_HTTP_MOCK_WEB_SERVER,
+            Libs.HILT_ANDROID_TEST
         )
     )
 
     kapts(
         listOf(
-            Libs.hiltCompiler
+            Libs.HILT_COMPILER
         )
     )
 
     androidTestImplementations(
         listOf(
-            Libs.androidxTestJunit,
-            Libs.androidxEspressoCore,
-            Libs.hiltAndroidTest
+            Libs.ANDROIDX_TEST_JUNIT,
+            Libs.ANDROIDX_ESPRESSO_CORE,
+            Libs.HILT_ANDROID_TEST
         )
     )
 
     kaptAndroidTests(
         listOf(
-            Libs.hiltCompiler
+            Libs.HILT_COMPILER
         )
     )
 

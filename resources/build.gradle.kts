@@ -12,10 +12,10 @@ plugins {
 
 android {
     namespace = "com.zerosword.resources"
-    compileSdk = AppConfig.compileSdkVer
+    compileSdk = AppConfig.COMPILE_SDK_VER
 
     defaultConfig {
-        minSdk = AppConfig.minSdkVer
+        minSdk = AppConfig.MIN_SDK_VER
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -56,42 +56,42 @@ dependencies {
 
     implementations(
         listOf(
-            platform(Libs.composeBom),
-            Libs.coreKtx,
-            Libs.retrofit,
-            Libs.activityCompose,
-            Libs.composeUi,
-            Libs.composeUiGraphics,
-            Libs.composeUiToolingPreview,
-            Libs.material3,
+            platform(Libs.COMPOSE_BOM),
+            Libs.CORE_KTX,
+            Libs.RETROFIT,
+            Libs.ACTIVITY_COMPOSE,
+            Libs.COMPOSE_UI,
+            Libs.COMPOSE_UI_GRAPHICS,
+            Libs.COMPOSE_UI_TOOLING_PREVIEW,
+            Libs.MATERIAL3,
         )
     )
 
     kapts(
         listOf(
-            Libs.hiltCompiler
+            Libs.HILT_COMPILER
         )
     )
 
     testImplementations(
         listOf(
-            Libs.junit,
+            Libs.JUNIT,
         )
     )
 
     androidTestImplementations(
         listOf(
-            platform(Libs.composeBom),
-            Libs.androidxTestJunit,
-            Libs.androidxEspressoCore,
-            Libs.composeUiTestJunit,
+            platform(Libs.COMPOSE_BOM),
+            Libs.ANDROIDX_TEST_JUNIT,
+            Libs.ANDROIDX_ESPRESSO_CORE,
+            Libs.COMPOSE_UI_TEST_JUNIT,
         )
     )
 
     debugImplementations(
         listOf(
-            Libs.composeUiTooling,
-            Libs.composeUiTestManifest
+            Libs.COMPOSE_UI_TOOLING,
+            Libs.COMPOSE_UI_TEST_MANIFEST
         )
     )
 
