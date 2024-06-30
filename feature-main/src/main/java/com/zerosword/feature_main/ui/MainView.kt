@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.zerosword.resources.R.*
 
 @Composable
 fun MainView(
@@ -44,6 +46,7 @@ fun MainView(
 
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val isInEditMode = LocalInspectionMode.current
 
     MainTheme(
         isDarkTheme
@@ -55,9 +58,7 @@ fun MainView(
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
                 val (topBarRef, contentsRef, bottomBarRef) = createRefs()
-                val topBarHeight = dimensionResource(
-                    id = com.zerosword.resources.R.dimen.top_bar_height
-                )
+                val topBarHeight = dimensionResource(id = dimen.top_bar_height)
 
                 Box(
                     modifier = Modifier
@@ -94,7 +95,11 @@ fun MainView(
                         }
                         .background(colorScheme.background),
                 ) {
-                    NavigationGraph(navController = navController)
+                    if (!isInEditMode)
+                        NavigationGraph(
+                            modifier = Modifier.fillMaxSize(),
+                            navController = navController,
+                        )
                 }
 
                 Box(
@@ -108,10 +113,8 @@ fun MainView(
                 ) {
                     BottomBar(navController = navController)
                 }
-
             }
         }
-
     }
 }
 
@@ -123,35 +126,49 @@ fun TopBar(title: String) {
 @Composable
 fun BottomBar(navController: NavHostController) {
     val context = LocalContext.current
-    val searchTitle = context.getString(com.zerosword.resources.R.string.search_screen_title)
-    val bookmarkTitle = context.getString(com.zerosword.resources.R.string.bookmark_screen_title)
-    val height = dimensionResource(id = com.zerosword.resources.R.dimen.bottom_bar_height)
+    val searchTitle = context.getString(string.search_screen_title)
+    val bookmarkTitle = context.getString(string.bookmark_screen_title)
+    val height = dimensionResource(id = dimen.bottom_bar_height)
 
     val items = listOf(searchTitle, bookmarkTitle)
 
-    NavigationBar(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(height)
-            .background(colorScheme.secondary)
     ) {
-        items.forEach { screen ->
 
-            val icon = when (screen) {
-                searchTitle -> Icons.Rounded.Search
-                bookmarkTitle -> Icons.Rounded.Favorite
-                else -> Icons.Rounded.Search
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(colorScheme.secondary)
+        )
+
+        NavigationBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            items.forEach { screen ->
+
+                val icon = when (screen) {
+                    searchTitle -> Icons.Rounded.Search
+                    bookmarkTitle -> Icons.Rounded.Favorite
+                    else -> Icons.Rounded.Search
+                }
+
+                BottomTabItem(
+                    modifier = Modifier,
+                    navController = navController,
+                    destScreen = screen,
+                    icon = icon
+                ) { navController.navigate(screen) }
+
             }
-
-            BottomTabItem(
-                modifier = Modifier,
-                navController = navController,
-                destScreen = screen,
-                icon = icon
-            ) { navController.navigate(screen) }
-
         }
     }
+
 }
 
 @Composable
@@ -228,12 +245,7 @@ fun RowScope.BottomTabItem(
 @Preview(showBackground = true)
 @Composable
 fun MainPreview() {
-    MainTheme() {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = colorScheme.background,
-        ) {
-            MainView()
-        }
+    MainTheme {
+        MainView(true)
     }
 }

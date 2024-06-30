@@ -54,6 +54,12 @@ object Libs {
     const val ANDROIDX_TEST_JUNIT = "androidx.test.ext:junit:1.1.5"
     const val ANDROIDX_ESPRESSO_CORE = "androidx.test.espresso:espresso-core:3.5.1"
 
+    //Paging
+    private const val PAGING_VER = "3.2.1"
+    const val PAGING = "androidx.paging:paging-runtime:$PAGING_VER"
+    const val PAGING_TEST = "androidx.paging:paging-common:$PAGING_VER"
+    const val PAGING_FOR_COMPOSE = "androidx.paging:paging-compose:3.3.0-alpha05"
+
     //Lifecycle
     private const val LIFECYCLE_VER = "2.7.0"
     const val VIEWMODEL = "androidx.lifecycle:lifecycle-viewmodel-ktx:$LIFECYCLE_VER"

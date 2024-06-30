@@ -5,12 +5,14 @@ import androidx.core.os.BuildCompat
 import com.google.gson.GsonBuilder
 import com.skydoves.sandwich.retrofit.adapters.ApiResponseCallAdapterFactory
 import com.zerosword.data.BuildConfig
+import com.zerosword.data.network.interceptor.ApiInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -45,16 +47,17 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideGsonConverter(): GsonConverterFactory = GsonConverterFactory.create(
-        GsonBuilder()
-            .create()
-    ) ?: GsonConverterFactory.create()
+        GsonBuilder().create()
+    )
 
     @Provides
     @Singleton
     fun provideOkHttpClient(
         httpCache: Cache,
-        loggingInterceptor: HttpLoggingInterceptor
+        loggingInterceptor: HttpLoggingInterceptor,
+        apiInterceptor: ApiInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
+        .addNetworkInterceptor(apiInterceptor)
         .addInterceptor(loggingInterceptor)
         .cache(httpCache)
         .connectTimeout(5, TimeUnit.SECONDS)
@@ -82,5 +85,9 @@ object NetworkModule {
                 HttpLoggingInterceptor.Level.BODY
             else HttpLoggingInterceptor.Level.BASIC
     }
+
+    @Singleton
+    @Provides
+    fun provideHttpInterceptor() : ApiInterceptor = ApiInterceptor()
 
 }
