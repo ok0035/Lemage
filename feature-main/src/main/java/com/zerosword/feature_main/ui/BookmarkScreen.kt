@@ -8,10 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.zerosword.feature_main.viewmodel.MainViewModel
+import com.zerosword.feature_main.viewmodel.BookmarkViewModel
 
 @Composable
-fun BookmarkScreen(viewModel: MainViewModel = hiltViewModel()) {
+fun BookmarkScreen(viewModel: BookmarkViewModel = hiltViewModel()) {
 
     Box(modifier = Modifier
         .background(MaterialTheme.colorScheme.background)
@@ -23,6 +23,6 @@ fun BookmarkScreen(viewModel: MainViewModel = hiltViewModel()) {
 
 @Composable
 @Preview(showBackground = true)
-fun BookmarkScreenPreview() {
+private fun BookmarkScreenPreview() {
     BookmarkScreen()
 }

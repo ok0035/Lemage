@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="network_error_msg">네트워크 에러가 발생했습니다. 잠시 후 다시 시도해주세요.</string>
-    <string name="empty_result_msg">검색 결과가 없습니다. 다른 키워드로 검색을 시도해보세요.</string>
+    <string name="network_error_msg">네트워크 에러가 발생했습니다.\n잠시 후 다시 시도해주세요.</string>
+    <string name="empty_result_msg">검색 결과가 없습니다.\n다른 키워드로 검색을 시도해보세요.</string>
     <string name="search_screen_title">검색</string>
     <string name="bookmark_screen_title">북마크</string>
     <string name="search_place_holder_msg">찾고 싶은 이미지를 검색해보세요.</string>
