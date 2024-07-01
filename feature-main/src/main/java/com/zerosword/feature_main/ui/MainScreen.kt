@@ -1,5 +1,6 @@
 package com.zerosword.feature_main.ui
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -22,25 +23,33 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.zerosword.feature_main.ui.graph.NavigationGraph
 import com.zerosword.resources.R.*
+import com.zerosword.resources.ui.theme.DarkColorScheme
+import com.zerosword.resources.ui.theme.LightColorScheme
+import com.zerosword.resources.ui.theme.Typography
 
 @Composable
-fun MainView(
+fun MainScreen(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
 ) {
 
@@ -119,12 +128,7 @@ fun MainView(
 }
 
 @Composable
-fun TopBar(title: String) {
-
-}
-
-@Composable
-fun BottomBar(navController: NavHostController) {
+private fun BottomBar(navController: NavHostController) {
     val context = LocalContext.current
     val searchTitle = context.getString(string.search_screen_title)
     val bookmarkTitle = context.getString(string.bookmark_screen_title)
@@ -172,7 +176,7 @@ fun BottomBar(navController: NavHostController) {
 }
 
 @Composable
-fun RowScope.BottomTabItem(
+private fun RowScope.BottomTabItem(
     modifier: Modifier = Modifier,
     destScreen: String,
     navController: NavHostController,
@@ -241,11 +245,33 @@ fun RowScope.BottomTabItem(
     }
 }
 
+@Composable
+private fun MainTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    val colorScheme = if(darkTheme) DarkColorScheme else LightColorScheme
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+        }
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
+}
+
 
 @Preview(showBackground = true)
 @Composable
-fun MainPreview() {
+private fun MainPreview() {
     MainTheme {
-        MainView(true)
+        MainScreen(true)
     }
 }

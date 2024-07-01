@@ -79,6 +79,7 @@ dependencies {
             Libs.COMPOSE_UI_GRAPHICS,
             Libs.COMPOSE_UI_FOR_CONSTRAINT,
             Libs.COMPOSE_UI_TOOLING_PREVIEW,
+            Libs.COMPOSE_NAVIGATION,
             Libs.MATERIAL3,
             Libs.COIL,
             Libs.HILT,

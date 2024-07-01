@@ -30,7 +30,7 @@ class KakaoRepositoryImpl @Inject constructor(
     ): Flow<PagingData<KakaoImageModel.DocumentModel>> {
 
         return Pager(
-            config = PagingConfig(pageSize = 20, enablePlaceholders = true),
+            config = PagingConfig(pageSize = 20, enablePlaceholders = false),
             pagingSourceFactory = {
                 KakaoImagePagingSource(kakaoService, query, sort)
             }

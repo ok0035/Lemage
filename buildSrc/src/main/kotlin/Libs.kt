@@ -42,6 +42,7 @@ object Libs {
     const val COMPOSE_UI_TOOLING = "androidx.compose.ui:ui-tooling"
     const val COMPOSE_UI_TEST_MANIFEST = "androidx.compose.ui:ui-test-manifest"
     const val COMPOSE_UI_FOR_CONSTRAINT = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+    const val COMPOSE_NAVIGATION = "androidx.navigation:navigation-compose:2.7.7"
 
     //Image
     const val GLIDE = "com.github.bumptech.glide:glide:4.14.2" // lib + kapt
