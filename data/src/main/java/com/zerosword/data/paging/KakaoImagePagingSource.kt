@@ -16,18 +16,22 @@ class KakaoImagePagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, KakaoImageModel.DocumentModel> {
         return try {
             val page = params.key ?: 1
-            val model = kakaoService.searchImage(
+            val response = kakaoService.searchImage(
                 query = query,
                 sort = sort,
                 page = page,
                 size = params.loadSize,
-            ).getOrNull()?.toDomainModel() ?: return LoadResult.Page(listOf(), null, null)
+            )
+
+            val model = response.getOrNull()?.toDomainModel()
+                ?: return LoadResult.Error(Exception("Empty response"))
 
             LoadResult.Page(
                 data = model.documents,
                 prevKey = if (page == 1) null else page - 1,
                 nextKey = if (model.meta?.isEnd == true) null else page + 1
             )
+
         } catch (e: Exception) {
             LoadResult.Error(e)
         }
