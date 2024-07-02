@@ -1,6 +1,5 @@
 package com.zerosword.feature_main.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,9 +17,11 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -35,9 +36,12 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.zerosword.domain.model.KakaoImageModel
-import com.zerosword.feature_main.R
+import com.zerosword.domain.state.ToastState
+import com.zerosword.feature_main.util.extension.toast
 import com.zerosword.feature_main.viewmodel.SearchViewModel
 import com.zerosword.resources.R.*
+import com.zerosword.resources.ui.compose.LoadingScreen
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
@@ -45,31 +49,50 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
 
     val lazyPagingItems: LazyPagingItems<KakaoImageModel.DocumentModel> =
         viewModel.imageSearchResults.collectAsLazyPagingItems()
-
     val context = LocalContext.current
+    val isLoading = remember { mutableStateOf(false) }
+    val isConnected = remember { mutableStateOf(false) }
 
-    // LoadState 관찰
-    LaunchedEffect(lazyPagingItems.loadState) {
-        snapshotFlow { lazyPagingItems.loadState }
-            .collect { loadStates ->
-                if (loadStates.refresh is LoadState.Error) {
-                    val error = (loadStates.refresh as LoadState.Error).error
-                    Toast.makeText(
-                        context,
-                        context.getText(string.network_error_msg),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+    LaunchedEffect(Unit) {
+        viewModel.toastState.collect {
+            val toastMessage = when (it) {
+                ToastState.API_ERROR ->
+                    context.getText(string.network_error_msg).toString()
+
+                ToastState.PAGING_ERROR ->
+                    context.getText(string.paging_error_msg).toString()
+
+                else -> ""
             }
+            if (toastMessage.isNotEmpty()) context.toast(toastMessage)
+        }
+
     }
 
-    SearchScreenContent(
-        lazyPagingItems = lazyPagingItems,
-        listState = viewModel.listState
-    ) { query ->
-        viewModel.searchImage(query = query)
+    LaunchedEffect(lazyPagingItems.loadState) {
+        val loadState = lazyPagingItems.loadState.refresh
+        isLoading.value = loadState is LoadState.Loading
+        if (loadState is LoadState.Error) {
+            viewModel.error(ToastState.PAGING_ERROR)
+        }
     }
 
+    LaunchedEffect(viewModel.isConnected) {
+        viewModel.isConnected.collectLatest {
+            isConnected.value = it
+        }
+    }
+
+    if(isConnected.value)
+        SearchScreenContent(
+            lazyPagingItems = lazyPagingItems,
+            listState = viewModel.listState
+        ) { query ->
+            viewModel.searchImage(query = query)
+        }
+
+    if (isLoading.value && isConnected.value) LoadingScreen()
+    if (!isConnected.value) NetworkErrorScreen()
 }
 
 @Composable
@@ -78,14 +101,15 @@ private fun SearchScreenContent(
     listState: LazyListState,
     onChangedKeyword: (query: String) -> Unit
 ) {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
     ) {
-
-        SearchBar { query -> onChangedKeyword(query) }
-        ImageViewer(lazyPagingItems, listState)
+        Column {
+            SearchBar { query -> onChangedKeyword(query) }
+            ImageViewer(lazyPagingItems, listState)
+        }
     }
 }
 
@@ -148,6 +172,26 @@ private fun ImageViewer(
                 model = imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth
+            )
+        }
+    }
+}
+
+@Composable
+fun NetworkErrorScreen() {
+    val context = LocalContext.current
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = context.getString(string.unstable_network_msg),
+                style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onPrimary)
+            )
+            Text(
+                text = context.getString(string.auto_refresh_connected),
+                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSecondary)
             )
         }
     }
