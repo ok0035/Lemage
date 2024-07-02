@@ -58,6 +58,7 @@ class SearchViewModel @Inject constructor(
             connection.isConnected.collectLatest { isConnected ->
                 _isConnected.value = isConnected
                 if (isConnected) {
+                    println("isConnected")
                     refreshList().collect { pagingData -> _imageSearchResults.value = pagingData }
                 }
             }
@@ -69,6 +70,7 @@ class SearchViewModel @Inject constructor(
                 .filter { it.isNotEmpty() }
                 .flatMapLatest { query ->
                     _currentQuery = query
+                    println("검색 중 -> $_currentQuery")
                     refreshList(_currentQuery)
                 }
                 .collect { pagingData ->
