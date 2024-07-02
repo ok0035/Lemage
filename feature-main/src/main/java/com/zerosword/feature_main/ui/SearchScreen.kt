@@ -87,9 +87,7 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
         SearchScreenContent(
             lazyPagingItems = lazyPagingItems,
             listState = viewModel.listState
-        ) { query ->
-            viewModel.searchImage(query = query)
-        }
+        ) { query -> viewModel.searchImage(query = query) }
 
     if (isLoading.value && isConnected.value) LoadingScreen()
     if (!isConnected.value) NetworkErrorScreen()
@@ -121,8 +119,7 @@ private fun SearchBar(onChangedKeyword: (query: String) -> Unit) {
     LaunchedEffect(key1 = searchQuery.value.text) {
         snapshotFlow { searchQuery.value.text }
             .collect { query ->
-                if (query.isNotEmpty())
-                    onChangedKeyword(query)
+                onChangedKeyword(query)
             }
     }
 
