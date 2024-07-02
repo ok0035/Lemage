@@ -1,6 +1,8 @@
 package com.zerosword.feature_main.viewmodel
 
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -33,39 +35,41 @@ class SearchViewModel @Inject constructor(
     private val connection: NetworkConnection,
 ) : ViewModel() {
 
-    private var _currentQuery = "레진 코믹스 앱 로고"
+    private var _currentQuery = "레진 코믹스 로고"
     private val _toastState: MutableSharedFlow<ToastState> = MutableSharedFlow(0)
     private val _searchQuery = MutableStateFlow(_currentQuery)
     private var _sortType = KakaoImageSortState.ACCURACY
-    private var _isConnected = MutableStateFlow(false)
+    private var _isConnected = MutableStateFlow(true)
     private val _imageSearchResults: MutableStateFlow<PagingData<KakaoImageModel.DocumentModel>> =
         MutableStateFlow(PagingData.empty())
     private val _startPage = 1
     private val _pageSize = 20
 
     val toastState: SharedFlow<ToastState> get() = _toastState.asSharedFlow()
+    val searchQuery: StateFlow<String> get() = _searchQuery.asStateFlow()
     val sortType get() = _sortType.value
     val imageSearchResults: StateFlow<PagingData<KakaoImageModel.DocumentModel>>
         get() =
             _imageSearchResults.asStateFlow()
-    val listState: LazyListState = LazyListState()
-    val isConnected : StateFlow<Boolean> get() = _isConnected.asStateFlow()
+    val listState: LazyStaggeredGridState = LazyStaggeredGridState()
+    val isConnected: StateFlow<Boolean> get() = _isConnected.asStateFlow()
 
     init {
-        println("init search viewmodel")
 
         viewModelScope.launch {
             connection.isConnected.collectLatest { isConnected ->
                 _isConnected.value = isConnected
                 if (isConnected) {
-                    println("isConnected")
-                    refreshList().collect { pagingData -> _imageSearchResults.value = pagingData }
+                    refreshList()
+                        .collect { pagingData ->
+                            _imageSearchResults.value = pagingData
+                        }
                 }
             }
         }
 
         viewModelScope.launch {
-            _searchQuery
+            searchQuery
                 .debounce(1000)
                 .filter { it.isNotEmpty() }
                 .flatMapLatest { query ->

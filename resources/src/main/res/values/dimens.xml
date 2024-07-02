@@ -3,5 +3,7 @@
 
     <dimen name="top_bar_height">48dp</dimen>
     <dimen name="bottom_bar_height">70dp</dimen>
+    <dimen name="image_border_radius">12dp</dimen>
+    <dimen name="searchbar_border_radius">8dp</dimen>
 
 </resources>
