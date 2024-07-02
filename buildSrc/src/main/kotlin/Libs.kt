@@ -71,6 +71,13 @@ object Libs {
     const val LIFECYCLE_RUNTIME_KTX = "androidx.lifecycle:lifecycle-runtime-ktx:$LIFECYCLE_VER"
     const val LIFECYCLE_SERVICE = "androidx.lifecycle:lifecycle-service:$LIFECYCLE_VER"
 
+    //Room
+    const val ROOM_VERSION = "2.6.1"
+    const val ROOM_COMPILER = "androidx.room:room-compiler:$ROOM_VERSION"
+    const val ROOM_RUNTIME = "androidx.room:room-runtime:$ROOM_VERSION"
+    const val ROOM_KTX = "androidx.room:room-ktx:$ROOM_VERSION"
+    const val ROOM_PAGING = "androidx.room:room-paging:$ROOM_VERSION"
+
     fun DependencyHandler.kapts(list: List<String>) {
         list.forEach { dependency ->
             add("kapt", dependency)

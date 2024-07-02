@@ -8,8 +8,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.zerosword.data.network.state.NetworkConnection
+import com.zerosword.domain.entity.FavoriteEntity
 import com.zerosword.domain.state.KakaoImageSortState
 import com.zerosword.domain.model.KakaoImageModel
+import com.zerosword.domain.reporitory.FavoriteRepository
 import com.zerosword.domain.reporitory.KakaoRepository
 import com.zerosword.domain.state.ToastState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +34,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val kakaoRepository: KakaoRepository,
+    private val favoriteRepository: FavoriteRepository,
     private val connection: NetworkConnection,
 ) : ViewModel() {
 
@@ -102,5 +105,19 @@ class SearchViewModel @Inject constructor(
 
     fun error(state: ToastState) = viewModelScope.launch {
         _toastState.emit(state)
+    }
+
+    fun addToFavoriteItem(favoriteEntity: FavoriteEntity) = viewModelScope.launch {
+        favoriteRepository.insert(favoriteEntity)
+    }
+
+    fun deleteFavoriteItem(favoriteEntity: FavoriteEntity) = viewModelScope.launch {
+        favoriteRepository.delete(favoriteEntity)
+    }
+
+    fun isFavorite(favorite: FavoriteEntity): StateFlow<Boolean> {
+        val isFavorite = MutableStateFlow(false)
+        viewModelScope.launch { isFavorite.value = favoriteRepository.isFavorite(favorite) }
+        return isFavorite
     }
 }
