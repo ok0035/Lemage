@@ -3,6 +3,9 @@ package com.zerosword.data.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.skydoves.sandwich.getOrNull
+import com.skydoves.sandwich.message
+import com.skydoves.sandwich.onFailure
+import com.skydoves.sandwich.suspendOnFailure
 import com.zerosword.data.response.toDomainModel
 import com.zerosword.data.services.KakaoService
 import com.zerosword.domain.model.KakaoImageModel
@@ -10,7 +13,8 @@ import com.zerosword.domain.model.KakaoImageModel
 class KakaoImagePagingSource(
     private val kakaoService: KakaoService,
     private val query: String,
-    private val sort: String
+    private val sort: String,
+    private val onError: (errorMsg: String) -> Unit = {}
 ) : PagingSource<Int, KakaoImageModel.DocumentModel>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, KakaoImageModel.DocumentModel> {
@@ -21,7 +25,9 @@ class KakaoImagePagingSource(
                 sort = sort,
                 page = page,
                 size = params.loadSize,
-            )
+            ).suspendOnFailure {
+                onError(this.message())
+            }
 
             val model = response.getOrNull()?.toDomainModel()
                 ?: return LoadResult.Error(Exception("Empty response"))

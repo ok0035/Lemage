@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--toast message-->
+    <string name="network_error_msg">The connection is unstable.\nPlease try again later.</string>
+    <string name="paging_error_msg">Failed to retrieve the list.\nPlease try again later.</string>
     <string name="empty_result_msg">There are no search results.\nPlease try searching with different keywords.</string>
-    <string name="network_error_msg">A network error has occurred.\nPlease try again later.</string>
+
+    <!--title-->
     <string name="search_screen_title">Search</string>
     <string name="bookmark_screen_title">Bookmark</string>
+
+    <!--place holder-->
     <string name="search_place_holder_msg">Search for the image you want to find.</string>
+    <string name="please_try_again_later">Please try again later</string>
+    <string name="unstable_network_msg">The connection is unstable.</string>
+    <string name="auto_refresh_connected">Network will refresh automatically once connected.</string>
+
 </resources>

@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="network_error_msg">네트워크 에러가 발생했습니다.\n잠시 후 다시 시도해주세요.</string>
+    <!--toast message-->
+    <string name="network_error_msg">접속상태가 원활하지 않습니다.\n잠시 후 다시 시도해주세요.</string>
+    <string name="paging_error_msg">목록을 불러오는데 실패했습니다.\n잠시 후 다시 시도해주세요.</string>
     <string name="empty_result_msg">검색 결과가 없습니다.\n다른 키워드로 검색을 시도해보세요.</string>
+
+    <!--title-->
     <string name="search_screen_title">검색</string>
     <string name="bookmark_screen_title">북마크</string>
+
+    <!--place holder-->
     <string name="search_place_holder_msg">찾고 싶은 이미지를 검색해보세요.</string>
+    <string name="please_try_again_later">잠시 후 다시 시도해주세요.</string>
+    <string name="auto_refresh_connected">네트워크가 연결되면 자동으로 갱신되요.</string>
+    <string name="unstable_network_msg">접속상태가 원활하지 않습니다.</string>
 
 </resources>
