@@ -1,6 +1,8 @@
 package com.zerosword.data.di
 
+import com.zerosword.data.repositoryimpl.FavoriteRepositoryImpl
 import com.zerosword.data.repositoryimpl.KakaoRepositoryImpl
+import com.zerosword.domain.reporitory.FavoriteRepository
 import com.zerosword.domain.reporitory.KakaoRepository
 import dagger.Binds
 import dagger.Module
@@ -14,6 +16,14 @@ abstract class RepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun provideMainRepository(kakaoRepositoryImpl: KakaoRepositoryImpl): KakaoRepository
+    abstract fun provideKakaoRepository(
+        kakaoRepositoryImpl: KakaoRepositoryImpl
+    ): KakaoRepository
+
+    @Singleton
+    @Binds
+    abstract fun provideFavoriteRepository(
+        favoriteRepositoryImpl: FavoriteRepositoryImpl
+    ): FavoriteRepository
 
 }

@@ -10,6 +10,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
+    id("androidx.room")
 }
 
 android {
@@ -47,6 +48,11 @@ android {
             )
         }
     }
+    
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
+
     buildFeatures {
         buildConfig = true
     }
@@ -78,7 +84,10 @@ dependencies {
             Libs.SANDWICH,
             Libs.SANDWICH_FOR_RETROFIT,
             Libs.HILT,
-            Libs.PAGING
+            Libs.PAGING,
+            Libs.ROOM_RUNTIME,
+            Libs.ROOM_KTX,
+            Libs.ROOM_PAGING
         )
     )
     testImplementations(
@@ -92,7 +101,8 @@ dependencies {
 
     kapts(
         listOf(
-            Libs.HILT_COMPILER
+            Libs.HILT_COMPILER,
+            Libs.ROOM_COMPILER
         )
     )
 

@@ -10,6 +10,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
+    id("androidx.room")
 }
 
 android {
@@ -32,13 +33,20 @@ android {
             )
         }
     }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
+
     buildFeatures {
         buildConfig = true
     }
+
     compileOptions {
         sourceCompatibility = AppConfig.javaVersion
         targetCompatibility = AppConfig.javaVersion
     }
+    
     kotlinOptions {
         jvmTarget = AppConfig.JVM_TARGET_VER
     }
@@ -54,13 +62,17 @@ dependencies {
         listOf(
             Libs.CORE_KTX,
             Libs.HILT,
-            PAGING
+            PAGING,
+            Libs.ROOM_RUNTIME,
+            Libs.ROOM_KTX,
+            Libs.ROOM_PAGING
         )
     )
 
     kapts(
         listOf(
-            Libs.HILT_COMPILER
+            Libs.HILT_COMPILER,
+            Libs.ROOM_COMPILER
         )
     )
 
