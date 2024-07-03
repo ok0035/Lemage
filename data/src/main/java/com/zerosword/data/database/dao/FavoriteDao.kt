@@ -1,11 +1,11 @@
 package com.zerosword.data.database.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.zerosword.domain.entity.FavoriteEntity
+import com.zerosword.data.database.entity.FavoriteEntity
+import com.zerosword.domain.entity.FavoriteModel
 
 @Dao
 interface FavoriteDao {
@@ -17,9 +17,6 @@ interface FavoriteDao {
 
     @Query("SELECT * FROM favorites")
     suspend fun getAllFavorites(): List<FavoriteEntity>
-
-    @Query("SELECT DISTINCT keyword FROM favorites")
-    suspend fun getAllKeywords(): List<String>
 
     @Query("SELECT * FROM favorites WHERE keyword = :keyword")
     suspend fun getFavoritesByKeyword(keyword: String): List<FavoriteEntity>

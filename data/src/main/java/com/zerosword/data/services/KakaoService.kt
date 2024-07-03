@@ -1,8 +1,7 @@
 package com.zerosword.data.services
 
 import com.skydoves.sandwich.ApiResponse
-import com.zerosword.data.response.KakaoImageResponse
-import com.zerosword.data.response.MainResponse
+import com.zerosword.data.network.response.KakaoImageResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

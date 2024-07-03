@@ -1,11 +1,12 @@
 package com.zerosword.feature_main.viewmodel
 
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zerosword.data.network.state.NetworkConnection
-import com.zerosword.domain.entity.FavoriteEntity
+import com.zerosword.data.database.entity.FavoriteEntity
+import com.zerosword.domain.entity.FavoriteModel
 import com.zerosword.domain.reporitory.FavoriteRepository
-import com.zerosword.domain.reporitory.KakaoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -31,8 +32,10 @@ class BookmarkViewModel @Inject constructor(
     private val _errorMsg: MutableSharedFlow<String> = MutableStateFlow("")
     val errorMsg: SharedFlow<String> get() = _errorMsg
 
-    private val _favoritesByKeyword = MutableStateFlow<Map<String, List<FavoriteEntity>>>(emptyMap())
-    val favoritesByKeyword: StateFlow<Map<String, List<FavoriteEntity>>> get() = _favoritesByKeyword
+    private val _favoritesByKeyword = MutableStateFlow<Map<String, List<FavoriteModel>>>(emptyMap())
+    val favoritesByKeyword: StateFlow<Map<String, List<FavoriteModel>>> get() = _favoritesByKeyword
+
+    val gridState = LazyStaggeredGridState()
 
     init {
         viewModelScope.launch {
@@ -45,7 +48,7 @@ class BookmarkViewModel @Inject constructor(
         }
     }
 
-    private fun loadFavoritesByKeyword() = viewModelScope.launch {
+    fun loadFavoritesByKeyword() = viewModelScope.launch {
         val allFavorites = favoriteRepository.getAllFavorites()
         val groupedFavorites = allFavorites.groupBy { it.keyword }
         _favoritesByKeyword.value = groupedFavorites

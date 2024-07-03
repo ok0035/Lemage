@@ -7,9 +7,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.zerosword.data.network.state.NetworkConnection
-import com.zerosword.domain.entity.FavoriteEntity
+import com.zerosword.data.database.entity.FavoriteEntity
+import com.zerosword.domain.entity.FavoriteModel
 import com.zerosword.domain.state.KakaoImageSortState
-import com.zerosword.domain.model.KakaoImageModel
 import com.zerosword.domain.model.KakaoImageModel.DocumentModel
 import com.zerosword.domain.reporitory.FavoriteRepository
 import com.zerosword.domain.reporitory.KakaoRepository
@@ -106,7 +106,7 @@ class SearchViewModel @Inject constructor(
     }
 
     fun addToFavoriteItem(keyword: String, imageUrl: String) = viewModelScope.launch {
-        favoriteRepository.insert(FavoriteEntity(keyword = keyword, imageUrl = imageUrl))
+        favoriteRepository.insert(FavoriteModel(keyword = keyword, imageUrl = imageUrl))
     }
 
     fun deleteFavoriteItem(keyword: String, imageUrl: String) = viewModelScope.launch {
