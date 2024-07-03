@@ -1,7 +1,6 @@
 package com.zerosword.feature_main.viewmodel
 
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.grid.LazyGridState
+import android.util.Log
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +10,7 @@ import com.zerosword.data.network.state.NetworkConnection
 import com.zerosword.domain.entity.FavoriteEntity
 import com.zerosword.domain.state.KakaoImageSortState
 import com.zerosword.domain.model.KakaoImageModel
+import com.zerosword.domain.model.KakaoImageModel.DocumentModel
 import com.zerosword.domain.reporitory.FavoriteRepository
 import com.zerosword.domain.reporitory.KakaoRepository
 import com.zerosword.domain.state.ToastState
@@ -43,19 +43,18 @@ class SearchViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow(_currentQuery)
     private var _sortType = KakaoImageSortState.ACCURACY
     private var _isConnected = MutableStateFlow(true)
-    private val _imageSearchResults: MutableStateFlow<PagingData<KakaoImageModel.DocumentModel>> =
-        MutableStateFlow(PagingData.empty())
     private val _startPage = 1
     private val _pageSize = 20
+    private val _imageSearchResults: MutableStateFlow<PagingData<DocumentModel>> =
+        MutableStateFlow(PagingData.empty())
 
     val toastState: SharedFlow<ToastState> get() = _toastState.asSharedFlow()
     val searchQuery: StateFlow<String> get() = _searchQuery.asStateFlow()
     val sortType get() = _sortType.value
-    val imageSearchResults: StateFlow<PagingData<KakaoImageModel.DocumentModel>>
-        get() =
-            _imageSearchResults.asStateFlow()
     val listState: LazyStaggeredGridState = LazyStaggeredGridState()
     val isConnected: StateFlow<Boolean> get() = _isConnected.asStateFlow()
+    val imageSearchResults: StateFlow<PagingData<DocumentModel>>
+        get() = _imageSearchResults.asStateFlow()
 
     init {
 
@@ -77,7 +76,6 @@ class SearchViewModel @Inject constructor(
                 .filter { it.isNotEmpty() }
                 .flatMapLatest { query ->
                     _currentQuery = query
-                    println("검색 중 -> $_currentQuery")
                     refreshList(_currentQuery)
                 }
                 .collect { pagingData ->
@@ -103,21 +101,30 @@ class SearchViewModel @Inject constructor(
         _searchQuery.value = query
     }
 
-    fun error(state: ToastState) = viewModelScope.launch {
+    fun showToast(state: ToastState) = viewModelScope.launch {
         _toastState.emit(state)
     }
 
-    fun addToFavoriteItem(favoriteEntity: FavoriteEntity) = viewModelScope.launch {
-        favoriteRepository.insert(favoriteEntity)
+    fun addToFavoriteItem(keyword: String, imageUrl: String) = viewModelScope.launch {
+        favoriteRepository.insert(FavoriteEntity(keyword = keyword, imageUrl = imageUrl))
     }
 
-    fun deleteFavoriteItem(favoriteEntity: FavoriteEntity) = viewModelScope.launch {
-        favoriteRepository.delete(favoriteEntity)
+    fun deleteFavoriteItem(keyword: String, imageUrl: String) = viewModelScope.launch {
+        favoriteRepository.delete(keyword, imageUrl)
     }
 
-    fun isFavorite(favorite: FavoriteEntity): StateFlow<Boolean> {
-        val isFavorite = MutableStateFlow(false)
-        viewModelScope.launch { isFavorite.value = favoriteRepository.isFavorite(favorite) }
+    fun allFavoriteList() = viewModelScope.launch {
+        favoriteRepository.getAllFavorites().forEachIndexed { index, favoriteEntity ->
+            Log.d("BOOKMARK", "$index ${favoriteEntity.imageUrl}")
+        }
+    }
+
+    fun isFavorite(keyword: String, imageUrl: String, favoriteState: Boolean): StateFlow<Boolean> {
+        Log.d("BOOKMARK", "is favorite $keyword $imageUrl")
+        val isFavorite = MutableStateFlow(favoriteState)
+        viewModelScope.launch {
+            isFavorite.value = favoriteRepository.isFavorite(keyword, imageUrl)
+        }
         return isFavorite
     }
 }
