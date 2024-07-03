@@ -12,8 +12,8 @@ interface FavoriteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavorite(favorite: FavoriteEntity)
 
-    @Delete
-    suspend fun deleteFavorite(favorite: FavoriteEntity)
+    @Query("DELETE FROM favorites WHERE imageUrl = :imageUrl AND keyword = :keyword")
+    suspend fun deleteFavorite(keyword: String, imageUrl: String)
 
     @Query("SELECT * FROM favorites")
     suspend fun getAllFavorites(): List<FavoriteEntity>

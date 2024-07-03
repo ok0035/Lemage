@@ -50,19 +50,14 @@ data class KakaoImageResponse(
 
 fun KakaoImageResponse.DocumentRes.toDomainModel(): KakaoImageModel.DocumentModel =
     KakaoImageModel.DocumentModel(
-        collection = collection,
-        datetime = datetime,
-        displaySiteName = displaySiteName,
-        docUrl = docUrl,
-        height = height,
-        width = width,
-        imageUrl = imageUrl,
-        thumbnailUrl = thumbnailUrl
+        imageUrl = imageUrl ?: "undefined",
     )
 
 fun KakaoImageResponse.MetaRes.toDomainModel(): KakaoImageModel.MetaModel =
     KakaoImageModel.MetaModel(
-        isEnd, pageableCount, totalCount
+        isEnd = isEnd ?: true,
+        pageableCount = pageableCount ?: 0,
+        totalCount = totalCount ?: 0
     )
 
 fun KakaoImageResponse.toDomainModel(): KakaoImageModel {

@@ -2,6 +2,7 @@ package com.zerosword.feature_main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zerosword.data.network.state.NetworkConnection
 import com.zerosword.domain.entity.FavoriteEntity
 import com.zerosword.domain.reporitory.FavoriteRepository
 import com.zerosword.domain.reporitory.KakaoRepository
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +22,11 @@ import javax.inject.Inject
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
     private val favoriteRepository: FavoriteRepository,
+    private val connection: NetworkConnection,
 ) : ViewModel() {
+
+    private var _isConnected = MutableStateFlow(true)
+    val isConnected: StateFlow<Boolean> get() = _isConnected.asStateFlow()
 
     private val _errorMsg: MutableSharedFlow<String> = MutableStateFlow("")
     val errorMsg: SharedFlow<String> get() = _errorMsg
@@ -28,7 +35,14 @@ class BookmarkViewModel @Inject constructor(
     val favoritesByKeyword: StateFlow<Map<String, List<FavoriteEntity>>> get() = _favoritesByKeyword
 
     init {
-        loadFavoritesByKeyword()
+        viewModelScope.launch {
+            connection.isConnected.collectLatest { isConnected ->
+                _isConnected.value = isConnected
+                if (isConnected) {
+                    loadFavoritesByKeyword()
+                }
+            }
+        }
     }
 
     private fun loadFavoritesByKeyword() = viewModelScope.launch {

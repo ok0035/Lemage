@@ -28,16 +28,16 @@ class FavoriteRepositoryImpl @Inject constructor(
     private val favoriteDao: FavoriteDao
 ) : FavoriteRepository {
 
-    override suspend fun isFavorite(favorite: FavoriteEntity): Boolean {
-        return favoriteDao.isFavoriteExists(favorite.keyword, favorite.imageUrl)
+    override suspend fun isFavorite(keyword: String, imageUrl: String): Boolean {
+        return favoriteDao.isFavoriteExists(keyword, imageUrl)
     }
 
     override suspend fun insert(favorite: FavoriteEntity) {
         favoriteDao.insertFavorite(favorite)
     }
 
-    override suspend fun delete(favorite: FavoriteEntity) {
-        favoriteDao.deleteFavorite(favorite)
+    override suspend fun delete(keyword: String, imageUrl: String) {
+        favoriteDao.deleteFavorite(keyword, imageUrl)
     }
 
     override suspend fun getAllFavorites(): List<FavoriteEntity> {

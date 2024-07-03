@@ -1,7 +1,6 @@
 package com.zerosword.feature_main.ui
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,15 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -62,7 +55,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.zerosword.domain.model.KakaoImageModel
 import com.zerosword.domain.state.ToastState
-import com.zerosword.feature_main.R
 import com.zerosword.feature_main.util.extension.toast
 import com.zerosword.feature_main.viewmodel.SearchViewModel
 import com.zerosword.resources.R.*
@@ -83,13 +75,10 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
 
     LaunchedEffect(Unit) {
         viewModel.toastState.collect {
+
             val toastMessage = when (it) {
-                ToastState.API_ERROR ->
-                    context.getText(string.network_error_msg).toString()
-
-                ToastState.PAGING_ERROR ->
-                    context.getText(string.paging_error_msg).toString()
-
+                ToastState.API_ERROR -> context.getText(string.network_error_msg).toString()
+                ToastState.PAGING_ERROR -> context.getText(string.paging_error_msg).toString()
                 else -> ""
             }
             if (toastMessage.isNotEmpty()) context.toast(toastMessage)
@@ -101,7 +90,7 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
         val loadState = lazyPagingItems.loadState.refresh
         isLoading.value = loadState is LoadState.Loading
         if (loadState is LoadState.Error) {
-            viewModel.error(ToastState.PAGING_ERROR)
+            viewModel.showToast(ToastState.PAGING_ERROR)
         }
     }
 
@@ -115,8 +104,40 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
         SearchScreenContent(
             viewModel.searchQuery,
             lazyPagingItems = lazyPagingItems,
-            listState = viewModel.listState
-        ) { query -> viewModel.searchImage(query = query) }
+            listState = viewModel.listState,
+            onChangedKeyword = { query ->
+                viewModel.searchImage(query = query)
+            },
+            onBindImage = { query, imageUrl, model ->
+
+                val isFavoriteState by viewModel.isFavorite(query, imageUrl, model.isFavorite)
+                    .collectAsState(initial = model.isFavorite)
+
+                ImageItem(
+                    keyword = query,
+                    item = model,
+                    isFavoriteState = isFavoriteState
+                ) { isFavorite, keyword, url ->
+                    val tag = "BOOKMARK"
+
+                    when (isFavorite) {
+
+                        true -> {
+                            viewModel.addToFavoriteItem(keyword, url)
+                            Log.d(tag, "북마크 추가 -> $url")
+                            viewModel.allFavoriteList()
+                        }
+
+                        false -> {
+                            viewModel.deleteFavoriteItem(keyword, url)
+                            Log.d(tag, "북마크 삭제 -> $url")
+                            viewModel.allFavoriteList()
+                        }
+
+                    }
+                }
+            }
+        )
 
     if (isLoading.value && isConnected.value) LoadingScreen()
     if (!isConnected.value) NetworkErrorScreen()
@@ -127,7 +148,8 @@ private fun SearchScreenContent(
     queryFlow: StateFlow<String>,
     lazyPagingItems: LazyPagingItems<KakaoImageModel.DocumentModel>,
     listState: LazyStaggeredGridState,
-    onChangedKeyword: (query: String) -> Unit
+    onChangedKeyword: (query: String) -> Unit,
+    onBindImage: @Composable (query: String, imageUrl: String, model: KakaoImageModel.DocumentModel) -> Unit
 ) {
     val query = queryFlow.collectAsState()
     Box(
@@ -137,7 +159,11 @@ private fun SearchScreenContent(
     ) {
         Column {
             SearchBar { query -> onChangedKeyword(query) }
-            ImageViewer(query.value, lazyPagingItems, listState)
+            ImageViewer(
+                query.value,
+                lazyPagingItems, listState,
+                onBindImage = onBindImage
+            )
         }
     }
 }
@@ -184,7 +210,8 @@ private fun SearchBar(onChangedKeyword: (query: String) -> Unit) {
 private fun ImageViewer(
     query: String,
     lazyPagingItems: LazyPagingItems<KakaoImageModel.DocumentModel>,
-    listState: LazyStaggeredGridState
+    listState: LazyStaggeredGridState,
+    onBindImage: @Composable (query: String, imageUrl: String, model: KakaoImageModel.DocumentModel) -> Unit
 ) {
 
     if (lazyPagingItems.loadState.append.endOfPaginationReached) {
@@ -199,12 +226,12 @@ private fun ImageViewer(
         items(
             count = lazyPagingItems.itemCount,
         ) { index ->
+            val item = lazyPagingItems[index]
+            val imageUrl = item?.imageUrl ?: ""
+            item?.let { model ->
+                onBindImage(query, imageUrl, model)
+            }
 
-            val imageUrl = lazyPagingItems[index]?.imageUrl ?: ""
-            if (imageUrl.isNotEmpty())
-                ImageItem(keyword = query, imageUrl = imageUrl) { isFavorite, keyword, imageUrl ->
-                    //찜목록 저장
-                }
         }
     }
 }
@@ -212,14 +239,24 @@ private fun ImageViewer(
 @Composable
 private fun ImageItem(
     keyword: String,
-    imageUrl: String,
-    onClickFavorite: (isFavorite: Boolean, keyword: String, imageUrl: String) -> Unit
+    item: KakaoImageModel.DocumentModel,
+    isFavoriteState: Boolean,
+    onBookmarkButtonClicked: (isFavorite: Boolean, keyword: String, imageUrl: String) -> Unit
 ) {
-
     val borderRadius = dimensionResource(id = dimen.image_border_radius)
-    var isFavorite by remember { mutableStateOf(false) }
-    var favoriteIcon by remember { mutableStateOf(Icons.Rounded.FavoriteBorder) }
-    var favoriteColor by remember { mutableStateOf(Color.White) }
+    var isFavorite by remember { mutableStateOf(isFavoriteState) }
+    val (favoriteIcon, favoriteColor) = remember(isFavorite) {
+        if (isFavorite) {
+            Icons.Rounded.Favorite to Color.Red
+        } else {
+            Icons.Rounded.FavoriteBorder to Color.White
+        }
+    }
+
+    LaunchedEffect(isFavoriteState) {
+        isFavorite = isFavoriteState
+        item.isFavorite = isFavoriteState
+    }
 
     ConstraintLayout(
         modifier = Modifier
@@ -227,87 +264,49 @@ private fun ImageItem(
             .wrapContentHeight()
             .heightIn(min = 100.dp)
     ) {
-        val imageRef = createRef()
-        val favoriteButtonRef = createRef()
+        val (imageRef, favoriteButtonRef) = createRefs()
 
         AsyncImage(
+            model = item.imageUrl,
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .heightIn(min = 100.dp)
+                .padding(4.dp)
+                .background(MaterialTheme.colorScheme.errorContainer, RoundedCornerShape(borderRadius))
+                .clip(RoundedCornerShape(borderRadius))
                 .constrainAs(imageRef) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
                 }
-                .padding(4.dp)
-                .background(
-                    MaterialTheme.colorScheme.errorContainer,
-                    RoundedCornerShape(borderRadius)
-                )
-                .clip(RoundedCornerShape(borderRadius)),
-            model = imageUrl,
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth
         )
 
         Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .width(35.dp)
-                .height(35.dp)
-                .background(Color.Black.copy(0.2f), CircleShape)
+                .size(35.dp)
+                .background(Color.Black.copy(alpha = 0.2f), CircleShape)
                 .clip(CircleShape)
-                .constrainAs(favoriteButtonRef) {
-                    end.linkTo(imageRef.end, 8.dp)
-                    bottom.linkTo(imageRef.bottom, 8.dp)
-                }
                 .clickable {
                     isFavorite = !isFavorite
-
-                    favoriteIcon = when (isFavorite) {
-                        true -> {
-                            favoriteColor = Color.Red
-                            Icons.Rounded.Favorite
-                        }
-                        false -> {
-                            favoriteColor = Color.White
-                            Icons.Rounded.FavoriteBorder
-                        }
-                    }
-                },
-            contentAlignment = Alignment.Center
+                    onBookmarkButtonClicked(isFavorite, keyword, item.imageUrl)
+                }
+                .constrainAs(favoriteButtonRef) {
+                    end.linkTo(imageRef.end, margin = 8.dp)
+                    bottom.linkTo(imageRef.bottom, margin = 8.dp)
+                }
         ) {
             Icon(
-                modifier = Modifier
-                    .width(30.dp),
                 imageVector = favoriteIcon,
                 contentDescription = null,
-                tint = favoriteColor // 원하는 색상으로 변경
-            )
-        }
-
-    }
-}
-
-@Composable
-fun NetworkErrorScreen() {
-    val context = LocalContext.current
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = context.getString(string.unstable_network_msg),
-                style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onPrimary)
-            )
-            Text(
-                text = context.getString(string.auto_refresh_connected),
-                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSecondary)
+                tint = favoriteColor,
+                modifier = Modifier.size(30.dp)
             )
         }
     }
 }
-
 @Composable
 @Preview(showBackground = true)
 private fun SearchScreenPreview() {
@@ -323,7 +322,9 @@ private fun SearchScreenPreview() {
         SearchScreenContent(
             searchFlow,
             lazyPagingItems = lazyPagingItems,
-            listState = listState
-        ) { _ -> }
+            listState = listState,
+            onChangedKeyword = { _ -> },
+            onBindImage = { _, _, _ -> }
+        )
     }
 }
