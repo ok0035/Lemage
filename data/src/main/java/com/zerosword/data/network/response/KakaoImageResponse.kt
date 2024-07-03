@@ -1,4 +1,4 @@
-package com.zerosword.data.response
+package com.zerosword.data.network.response
 
 
 import com.google.gson.annotations.SerializedName

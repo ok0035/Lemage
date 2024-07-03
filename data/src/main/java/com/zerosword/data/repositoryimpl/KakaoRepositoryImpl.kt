@@ -10,7 +10,7 @@ import com.skydoves.sandwich.suspendOnFailure
 import com.skydoves.sandwich.suspendOnSuccess
 import com.zerosword.data.network.state.NetworkConnection
 import com.zerosword.data.paging.KakaoImagePagingSource
-import com.zerosword.data.response.toDomainModel
+import com.zerosword.data.network.response.toDomainModel
 import com.zerosword.data.services.KakaoService
 import com.zerosword.domain.model.KakaoImageModel
 import com.zerosword.domain.reporitory.KakaoRepository

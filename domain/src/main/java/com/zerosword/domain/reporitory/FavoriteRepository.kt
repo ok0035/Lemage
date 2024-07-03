@@ -1,21 +1,17 @@
 package com.zerosword.domain.reporitory
 
-import androidx.paging.PagingData
-import com.zerosword.domain.entity.FavoriteEntity
-import com.zerosword.domain.model.KakaoImageModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
+import com.zerosword.domain.entity.FavoriteModel
 
 interface FavoriteRepository {
 
     suspend fun isFavorite(keyword: String, imageUrl: String): Boolean
 
-    suspend fun insert(favorite: FavoriteEntity)
+    suspend fun insert(favorite: FavoriteModel)
 
     suspend fun delete(keyword: String, imageUrl: String)
 
-    suspend fun getAllFavorites(): List<FavoriteEntity>
+    suspend fun getAllFavorites(): List<FavoriteModel>
 
-    suspend fun getFavoritesByKeyword(keyword: String): List<FavoriteEntity>
+    suspend fun getFavoritesByKeyword(keyword: String): List<FavoriteModel>
 
 }
