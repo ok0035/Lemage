@@ -15,5 +15,6 @@
     <string name="please_try_again_later">Please try again later</string>
     <string name="unstable_network_msg">The connection is unstable.</string>
     <string name="auto_refresh_connected">Network will refresh automatically once connected.</string>
+    <string name="delete_button_text">Delete</string>
 
 </resources>

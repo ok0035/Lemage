@@ -6,6 +6,8 @@ interface FavoriteRepository {
 
     suspend fun isFavorite(keyword: String, imageUrl: String): Boolean
 
+    suspend fun isFavorite(imageUrl: String): Boolean
+
     suspend fun insert(favorite: FavoriteModel)
 
     suspend fun delete(keyword: String, imageUrl: String)
@@ -13,5 +15,7 @@ interface FavoriteRepository {
     suspend fun getAllFavorites(): List<FavoriteModel>
 
     suspend fun getFavoritesByKeyword(keyword: String): List<FavoriteModel>
+
+    suspend fun getFavorite(keyword: String, imageUrl: String): FavoriteModel?
 
 }

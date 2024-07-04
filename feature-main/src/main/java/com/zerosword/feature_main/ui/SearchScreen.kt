@@ -1,13 +1,15 @@
 package com.zerosword.feature_main.ui
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -59,8 +62,6 @@ import com.zerosword.feature_main.util.extension.toast
 import com.zerosword.feature_main.viewmodel.SearchViewModel
 import com.zerosword.resources.R.*
 import com.zerosword.resources.ui.compose.LoadingScreen
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
 
@@ -72,6 +73,11 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val isLoading = remember { mutableStateOf(false) }
     val isConnected = remember { mutableStateOf(false) }
+    var keyword by remember { mutableStateOf(viewModel.searchQuery.value) }
+
+    LaunchedEffect(viewModel.searchQuery) {
+        keyword = viewModel.searchQuery.value
+    }
 
     LaunchedEffect(Unit) {
         viewModel.toastState.collect {
@@ -102,19 +108,17 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
 
     if (isConnected.value)
         SearchScreenContent(
-            viewModel.searchQuery,
             lazyPagingItems = lazyPagingItems,
             listState = viewModel.listState,
             onChangedKeyword = { query ->
-                viewModel.searchImage(query = query)
+                if (query.isNotEmpty()) viewModel.searchImage(query = query)
             },
-            onBindImage = { query, imageUrl, model ->
-
-                val isFavoriteState by viewModel.isFavorite(query, imageUrl, model.isFavorite)
+            onBindImage = { imageUrl, model ->
+                val isFavoriteState by viewModel.isFavorite(keyword, imageUrl, model.isFavorite)
                     .collectAsState(initial = model.isFavorite)
 
-                ImageItem(
-                    keyword = query,
+                FavoriteItem(
+                    keyword = keyword,
                     item = model,
                     isFavoriteState = isFavoriteState
                 ) { isFavorite, keyword, url ->
@@ -145,13 +149,12 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
 
 @Composable
 private fun SearchScreenContent(
-    queryFlow: StateFlow<String>,
     lazyPagingItems: LazyPagingItems<KakaoImageModel.DocumentModel>,
     listState: LazyStaggeredGridState,
     onChangedKeyword: (query: String) -> Unit,
-    onBindImage: @Composable (query: String, imageUrl: String, model: KakaoImageModel.DocumentModel) -> Unit
+    onBindImage: @Composable (imageUrl: String, model: KakaoImageModel.DocumentModel) -> Unit
 ) {
-    val query = queryFlow.collectAsState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -160,7 +163,6 @@ private fun SearchScreenContent(
         Column {
             SearchBar { query -> onChangedKeyword(query) }
             ImageViewer(
-                query.value,
                 lazyPagingItems, listState,
                 onBindImage = onBindImage
             )
@@ -181,42 +183,59 @@ private fun SearchBar(onChangedKeyword: (query: String) -> Unit) {
             }
     }
 
-    TextField(
-        value = searchQuery.value,
-        onValueChange = { searchQuery.value = it },
-        placeholder = {
-            Text(
-                context.getString(string.search_place_holder_msg),
-                style = MaterialTheme.typography.bodySmall
-            )
-        },
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp)
-            .background(Color.White, shape = RoundedCornerShape(8.dp)),
-        shape = RoundedCornerShape(searchbarBorderRadius),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.secondary,
-            unfocusedContainerColor = MaterialTheme.colorScheme.secondary,
-            disabledContainerColor = MaterialTheme.colorScheme.secondary,
-            cursorColor = MaterialTheme.colorScheme.onSecondary,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-        ),
-    )
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.secondary,
+                    shape = RoundedCornerShape(8.dp)
+                ),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.width(12.dp))
+            Image(
+                modifier = Modifier.size(16.dp),
+                imageVector = Icons.Rounded.Search,
+                contentDescription = null
+            )
+            TextField(
+                value = searchQuery.value,
+                onValueChange = { searchQuery.value = it },
+                placeholder = {
+                    Text(
+                        context.getString(string.search_place_holder_msg),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .background(Color.White, shape = RoundedCornerShape(8.dp)),
+                shape = RoundedCornerShape(searchbarBorderRadius),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.secondary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.secondary,
+                    disabledContainerColor = MaterialTheme.colorScheme.secondary,
+                    cursorColor = MaterialTheme.colorScheme.onSecondary,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                ),
+            )
+        }
+    }
 }
 
 @Composable
 private fun ImageViewer(
-    query: String,
     lazyPagingItems: LazyPagingItems<KakaoImageModel.DocumentModel>,
     listState: LazyStaggeredGridState,
-    onBindImage: @Composable (query: String, imageUrl: String, model: KakaoImageModel.DocumentModel) -> Unit
+    onBindImage: @Composable (imageUrl: String, model: KakaoImageModel.DocumentModel) -> Unit
 ) {
-
-    if (lazyPagingItems.loadState.append.endOfPaginationReached) {
-        Log.d("Paging", "End of pagination reached")
-    }
 
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
@@ -229,7 +248,7 @@ private fun ImageViewer(
             val item = lazyPagingItems[index]
             val imageUrl = item?.imageUrl ?: ""
             item?.let { model ->
-                onBindImage(query, imageUrl, model)
+                onBindImage(imageUrl, model)
             }
 
         }
@@ -237,7 +256,7 @@ private fun ImageViewer(
 }
 
 @Composable
-private fun ImageItem(
+private fun FavoriteItem(
     keyword: String,
     item: KakaoImageModel.DocumentModel,
     isFavoriteState: Boolean,
@@ -273,7 +292,10 @@ private fun ImageItem(
             modifier = Modifier
                 .heightIn(min = 100.dp)
                 .padding(4.dp)
-                .background(MaterialTheme.colorScheme.errorContainer, RoundedCornerShape(borderRadius))
+                .background(
+                    MaterialTheme.colorScheme.errorContainer,
+                    RoundedCornerShape(borderRadius)
+                )
                 .clip(RoundedCornerShape(borderRadius))
                 .constrainAs(imageRef) {
                     top.linkTo(parent.top)
@@ -307,6 +329,7 @@ private fun ImageItem(
         }
     }
 }
+
 @Composable
 @Preview(showBackground = true)
 private fun SearchScreenPreview() {
@@ -317,14 +340,12 @@ private fun SearchScreenPreview() {
         ).collectAsLazyPagingItems()
 
     val listState = rememberLazyStaggeredGridState()
-    val searchFlow = MutableStateFlow("")
     Box(Modifier.fillMaxSize()) {
         SearchScreenContent(
-            searchFlow,
             lazyPagingItems = lazyPagingItems,
             listState = listState,
             onChangedKeyword = { _ -> },
-            onBindImage = { _, _, _ -> }
+            onBindImage = { _, _ -> }
         )
     }
 }

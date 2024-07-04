@@ -21,6 +21,12 @@ interface FavoriteDao {
     @Query("SELECT * FROM favorites WHERE keyword = :keyword")
     suspend fun getFavoritesByKeyword(keyword: String): List<FavoriteEntity>
 
+    @Query("SELECT * FROM favorites WHERE keyword = :keyword AND imageUrl = :imageUrl LIMIT 1")
+    suspend fun getFavorite(keyword: String, imageUrl: String): FavoriteEntity?
+
     @Query("SELECT EXISTS(SELECT 1 FROM favorites WHERE keyword = :keyword AND imageUrl = :imageUrl)")
     suspend fun isFavoriteExists(keyword: String, imageUrl: String): Boolean
+
+    @Query("SELECT EXISTS(SELECT 1 FROM favorites WHERE imageUrl = :imageUrl)")
+    suspend fun isFavoriteExists(imageUrl: String): Boolean
 }

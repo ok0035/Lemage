@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.zerosword.data.network.state.NetworkConnection
 import com.zerosword.data.database.entity.FavoriteEntity
 import com.zerosword.domain.entity.FavoriteModel
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -120,10 +122,17 @@ class SearchViewModel @Inject constructor(
     }
 
     fun isFavorite(keyword: String, imageUrl: String, favoriteState: Boolean): StateFlow<Boolean> {
-        Log.d("BOOKMARK", "is favorite $keyword $imageUrl")
         val isFavorite = MutableStateFlow(favoriteState)
         viewModelScope.launch {
             isFavorite.value = favoriteRepository.isFavorite(keyword, imageUrl)
+        }
+        return isFavorite
+    }
+
+    fun isFavorite(imageUrl: String, favoriteState: Boolean): StateFlow<Boolean> {
+        val isFavorite = MutableStateFlow(favoriteState)
+        viewModelScope.launch {
+            isFavorite.value = favoriteRepository.isFavorite(imageUrl)
         }
         return isFavorite
     }
