@@ -15,5 +15,6 @@
     <string name="please_try_again_later">잠시 후 다시 시도해주세요.</string>
     <string name="auto_refresh_connected">네트워크가 연결되면 자동으로 갱신되요.</string>
     <string name="unstable_network_msg">접속상태가 원활하지 않습니다.</string>
+    <string name="delete_button_text">삭제</string>
 
 </resources>

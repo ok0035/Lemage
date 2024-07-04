@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="bookmark_header_height">80dp</dimen>
     <dimen name="top_bar_height">48dp</dimen>
     <dimen name="bottom_bar_height">70dp</dimen>
     <dimen name="image_border_radius">12dp</dimen>
+    <dimen name="button_border_radius">12dp</dimen>
     <dimen name="searchbar_border_radius">8dp</dimen>
 
 </resources>

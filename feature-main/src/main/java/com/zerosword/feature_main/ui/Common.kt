@@ -1,5 +1,6 @@
 package com.zerosword.feature_main.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +17,7 @@ fun NetworkErrorScreen() {
     val context = LocalContext.current
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(

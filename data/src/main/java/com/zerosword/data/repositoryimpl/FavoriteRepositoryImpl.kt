@@ -18,6 +18,11 @@ class FavoriteRepositoryImpl @Inject constructor(
         return favoriteDao.isFavoriteExists(keyword, imageUrl)
     }
 
+    override suspend fun isFavorite(imageUrl: String): Boolean {
+        return favoriteDao.isFavoriteExists(imageUrl)
+    }
+
+
     override suspend fun insert(favorite: FavoriteModel) {
         favoriteDao.insertFavorite(favorite.toEntity())
     }
@@ -32,6 +37,10 @@ class FavoriteRepositoryImpl @Inject constructor(
 
     override suspend fun getFavoritesByKeyword(keyword: String): List<FavoriteModel> {
         return favoriteDao.getFavoritesByKeyword(keyword).toDomainModel()
+    }
+
+    override suspend fun getFavorite(keyword: String, imageUrl: String): FavoriteModel? {
+        return favoriteDao.getFavorite(keyword, imageUrl)?.toDomainModel()
     }
 
 }
