@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.zerosword.data.database.entity.FavoriteEntity
-import com.zerosword.domain.entity.FavoriteModel
 
 @Dao
 interface FavoriteDao {

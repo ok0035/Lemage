@@ -16,5 +16,8 @@
     <string name="unstable_network_msg">The connection is unstable.</string>
     <string name="auto_refresh_connected">Network will refresh automatically once connected.</string>
     <string name="delete_button_text">Delete</string>
+    <string name="image_viewer_title">Image Viewer</string>
+    <string name="empty_result_main_msg">No result.</string>
+    <string name="empty_result_sub_msg">Try search another keyword.</string>
 
 </resources>

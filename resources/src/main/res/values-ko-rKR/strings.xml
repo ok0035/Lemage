@@ -16,5 +16,8 @@
     <string name="unstable_network_msg">접속상태가 원활하지 않습니다.</string>
     <string name="auto_refresh_connected">네트워크가 연결되면 자동으로 갱신되요.</string>
     <string name="delete_button_text">삭제</string>
+    <string name="image_viewer_title">이미지 뷰어</string>
+    <string name="empty_result_main_msg">검색 결과가 없습니다.</string>
+    <string name="empty_result_sub_msg">다른 키워드로 검색해주세요.</string>
 
 </resources>
