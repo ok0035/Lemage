@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
@@ -74,7 +75,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @Composable
-fun SearchScreen(viewModel: SearchViewModel = hiltViewModel(), navController: NavController = rememberNavController()) {
+fun SearchScreen(
+    viewModel: SearchViewModel = hiltViewModel(),
+    navController: NavController = rememberNavController()
+) {
 
     val lazyPagingItems: LazyPagingItems<KakaoImageModel.DocumentModel> =
         viewModel.imageSearchResults.collectAsLazyPagingItems()
@@ -116,10 +120,11 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel(), navController: Na
 
     if (isConnected.value)
         SearchScreenContent(
+            initKeyword = keyword,
             lazyPagingItems = lazyPagingItems,
             listState = viewModel.listState,
             onChangedKeyword = { query ->
-                if (query.isNotEmpty()) viewModel.searchImage(query = query)
+                viewModel.searchImage(query = query)
             },
             onBindImage = { imageUrl, model ->
                 val isFavoriteState by viewModel.isFavorite(keyword, imageUrl, model.isFavorite)
@@ -158,6 +163,7 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel(), navController: Na
 
 @Composable
 private fun SearchScreenContent(
+    initKeyword: String = "",
     lazyPagingItems: LazyPagingItems<KakaoImageModel.DocumentModel>,
     listState: LazyStaggeredGridState,
     onChangedKeyword: (query: String) -> Unit,
@@ -170,7 +176,7 @@ private fun SearchScreenContent(
             .background(MaterialTheme.colorScheme.background)
     ) {
         Column {
-            SearchBar { query -> onChangedKeyword(query) }
+            SearchBar(initKeyword = initKeyword) { query -> onChangedKeyword(query) }
             ImageList(
                 lazyPagingItems, listState,
                 onBindImage = onBindImage
@@ -180,8 +186,8 @@ private fun SearchScreenContent(
 }
 
 @Composable
-private fun SearchBar(onChangedKeyword: (query: String) -> Unit) {
-    val searchQuery = remember { mutableStateOf(TextFieldValue()) }
+private fun SearchBar(initKeyword: String = "", onChangedKeyword: (query: String) -> Unit) {
+    val searchQuery = remember { mutableStateOf(TextFieldValue(initKeyword)) }
     val context = LocalContext.current
     val searchbarBorderRadius = dimensionResource(id = dimen.searchbar_border_radius)
 
@@ -235,6 +241,10 @@ private fun SearchBar(onChangedKeyword: (query: String) -> Unit) {
                     cursorColor = MaterialTheme.colorScheme.onSecondary,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
+                    selectionColors = TextSelectionColors(
+                        handleColor = MaterialTheme.colorScheme.tertiary,
+                        MaterialTheme.colorScheme.tertiaryContainer
+                    )
                 ),
             )
         }
@@ -265,7 +275,7 @@ private fun ImageList(
         }
     }
 
-    if(lazyPagingItems.itemCount == 0) EmptyResultScreen()
+    if (lazyPagingItems.itemCount == 0) EmptyResultScreen()
 }
 
 @Composable
@@ -323,7 +333,7 @@ private fun SearchItem(
                 }
                 .clickable {
                     scope.launch {
-                        if(isClickedItem) return@launch
+                        if (isClickedItem) return@launch
                         isClickedItem = true
                         val route = Routes.ImageViewer.withArgs(item.imageUrl.urlEncode())
                         navController.safeNavigate(route = route)
