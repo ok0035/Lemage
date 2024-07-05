@@ -109,6 +109,7 @@ fun BookmarkScreen(viewModel: BookmarkViewModel = hiltViewModel()) {
                                             viewModel.findItem(keyword, imageUrl)
                                                 .collectLatest { model ->
                                                     model?.let {
+                                                        model.isSelect = isSelect
                                                         if (isSelect)
                                                             viewModel.addItemToDeleteList(model)
                                                         else viewModel.deleteItemToDeleteList(model)
@@ -238,7 +239,7 @@ private fun RowScope.FavoriteItem(
     onSelectButtonClicked: (isSelect: Boolean, keyword: String, imageUrl: String) -> Unit
 ) {
     val borderRadius = dimensionResource(id = R.dimen.image_border_radius)
-    var isSelect by remember { mutableStateOf(false) }
+    var isSelect by remember { mutableStateOf(item.isSelect) }
     val (selectionIcon, selectionColor) = remember(isSelect) {
         if (isSelect)
             Icons.Rounded.Check to Color.White
@@ -247,6 +248,7 @@ private fun RowScope.FavoriteItem(
     }
 
     val selectionBackColor = remember(isSelect) {
+        item.isSelect = isSelect
         if (isSelect)
             Color.Red.copy(alpha = 0.8f)
         else Color.Black.copy(alpha = 0.8f)
