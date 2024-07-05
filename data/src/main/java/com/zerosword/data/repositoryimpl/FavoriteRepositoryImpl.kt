@@ -1,7 +1,6 @@
 package com.zerosword.data.repositoryimpl
 
 import com.zerosword.data.database.dao.FavoriteDao
-import com.zerosword.data.database.entity.FavoriteEntity
 import com.zerosword.data.database.entity.toDomainModel
 import com.zerosword.data.database.entity.toEntity
 import com.zerosword.domain.entity.FavoriteModel

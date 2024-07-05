@@ -1,7 +1,6 @@
 package com.zerosword.feature_main.ui
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -25,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -51,22 +52,29 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
+import com.zerosword.domain.extension.urlEncode
 import com.zerosword.domain.model.KakaoImageModel
+import com.zerosword.domain.navigation.Routes
 import com.zerosword.domain.state.ToastState
+import com.zerosword.feature_main.ui.graph.safeNavigate
 import com.zerosword.feature_main.util.extension.toast
 import com.zerosword.feature_main.viewmodel.SearchViewModel
 import com.zerosword.resources.R.*
 import com.zerosword.resources.ui.compose.LoadingScreen
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 
 @Composable
-fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
+fun SearchScreen(viewModel: SearchViewModel = hiltViewModel(), navController: NavController = rememberNavController()) {
 
     val lazyPagingItems: LazyPagingItems<KakaoImageModel.DocumentModel> =
         viewModel.imageSearchResults.collectAsLazyPagingItems()
@@ -117,10 +125,11 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                 val isFavoriteState by viewModel.isFavorite(keyword, imageUrl, model.isFavorite)
                     .collectAsState(initial = model.isFavorite)
 
-                FavoriteItem(
+                SearchItem(
                     keyword = keyword,
                     item = model,
-                    isFavoriteState = isFavoriteState
+                    isFavoriteState = isFavoriteState,
+                    navController = navController
                 ) { isFavorite, keyword, url ->
                     val tag = "BOOKMARK"
 
@@ -162,7 +171,7 @@ private fun SearchScreenContent(
     ) {
         Column {
             SearchBar { query -> onChangedKeyword(query) }
-            ImageViewer(
+            ImageList(
                 lazyPagingItems, listState,
                 onBindImage = onBindImage
             )
@@ -214,6 +223,7 @@ private fun SearchBar(onChangedKeyword: (query: String) -> Unit) {
                         style = MaterialTheme.typography.bodySmall
                     )
                 },
+                singleLine = true,
                 modifier = Modifier
                     .weight(1f)
                     .background(Color.White, shape = RoundedCornerShape(8.dp)),
@@ -232,7 +242,7 @@ private fun SearchBar(onChangedKeyword: (query: String) -> Unit) {
 }
 
 @Composable
-private fun ImageViewer(
+private fun ImageList(
     lazyPagingItems: LazyPagingItems<KakaoImageModel.DocumentModel>,
     listState: LazyStaggeredGridState,
     onBindImage: @Composable (imageUrl: String, model: KakaoImageModel.DocumentModel) -> Unit
@@ -254,13 +264,16 @@ private fun ImageViewer(
 
         }
     }
+
+    if(lazyPagingItems.itemCount == 0) EmptyResultScreen()
 }
 
 @Composable
-private fun FavoriteItem(
+private fun SearchItem(
     keyword: String,
     item: KakaoImageModel.DocumentModel,
     isFavoriteState: Boolean,
+    navController: NavController,
     onBookmarkButtonClicked: (isFavorite: Boolean, keyword: String, imageUrl: String) -> Unit
 ) {
     val borderRadius = dimensionResource(id = dimen.image_border_radius)
@@ -271,6 +284,10 @@ private fun FavoriteItem(
         } else {
             Icons.Rounded.FavoriteBorder to Color.White
         }
+    }
+    val scope = rememberCoroutineScope()
+    var isClickedItem by remember {
+        mutableStateOf(false)
     }
 
     LaunchedEffect(isFavoriteState) {
@@ -303,6 +320,17 @@ private fun FavoriteItem(
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
+                }
+                .clickable {
+                    scope.launch {
+                        if(isClickedItem) return@launch
+                        isClickedItem = true
+                        val route = Routes.ImageViewer.withArgs(item.imageUrl.urlEncode())
+                        navController.safeNavigate(route = route)
+                        delay(1000)
+                        isClickedItem = false
+                    }
+
                 }
         )
 

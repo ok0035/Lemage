@@ -1,7 +1,6 @@
 package com.zerosword.feature_main.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,16 +48,25 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.zerosword.domain.entity.FavoriteModel
+import com.zerosword.domain.extension.urlEncode
+import com.zerosword.domain.navigation.Routes
+import com.zerosword.feature_main.ui.graph.safeNavigate
 import com.zerosword.feature_main.viewmodel.BookmarkViewModel
 import com.zerosword.resources.R
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BookmarkScreen(viewModel: BookmarkViewModel = hiltViewModel()) {
+fun BookmarkScreen(
+    viewModel: BookmarkViewModel = hiltViewModel(),
+    navController: NavController = rememberNavController()
+) {
 
     val headerHeight = dimensionResource(id = R.dimen.bookmark_header_height)
     val favoritesGroupedByKeyword by viewModel.favoritesByKeyword.collectAsState()
@@ -86,9 +94,11 @@ fun BookmarkScreen(viewModel: BookmarkViewModel = hiltViewModel()) {
     }
 
     if (isConnected.value) {
-        ConstraintLayout(modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 12.dp)) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp)
+        ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 state = viewModel.listState
@@ -97,37 +107,21 @@ fun BookmarkScreen(viewModel: BookmarkViewModel = hiltViewModel()) {
                     stickyHeader { Header(keyword = keyword) }
                     items(favorites.chunked(chunkSize)) { rowFavorites ->
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(0.dp)
-                        ) {
-                            rowFavorites.forEach { model ->
-                                FavoriteItem(
-                                    item = model,
-                                    onSelectButtonClicked = { isSelect: Boolean, keyword: String, imageUrl: String ->
-                                        scope.launch {
-                                            viewModel.findItem(keyword, imageUrl)
-                                                .collectLatest { model ->
-                                                    model?.let {
-                                                        model.isSelect = isSelect
-                                                        if (isSelect)
-                                                            viewModel.addItemToDeleteList(model)
-                                                        else viewModel.deleteItemToDeleteList(model)
-                                                    }
-
-                                                }
-                                        }
-
+                        ChunkedFavoriteItems(
+                            chunkSize = chunkSize,
+                            list = rowFavorites,
+                            navController = navController
+                        ) { isSelect, keyword, imageUrl ->
+                            scope.launch {
+                                viewModel.findItem(keyword, imageUrl).collectLatest { model ->
+                                    model?.let {
+                                        model.isSelect = isSelect
+                                        if (isSelect) viewModel.addItemToDeleteList(model)
+                                        else viewModel.deleteItemToDeleteList(model)
                                     }
-                                )
+                                }
                             }
-
-                            repeat(3 - rowFavorites.size) {
-                                Spacer(modifier = Modifier.weight(1f))
-                            }
-
                         }
-
                     }
                 }
             }
@@ -153,6 +147,34 @@ fun BookmarkScreen(viewModel: BookmarkViewModel = hiltViewModel()) {
     }
 
     if (!isConnected.value) NetworkErrorScreen()
+}
+
+@Composable
+private fun ChunkedFavoriteItems(
+    chunkSize: Int,
+    list: List<FavoriteModel>,
+    navController: NavController,
+    onSelectButtonClicked: (isSelect: Boolean, keyword: String, imageUrl: String) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(0.dp)
+    ) {
+        list.forEach { model ->
+            FavoriteItem(
+                item = model,
+                navController = navController,
+                onSelectButtonClicked = { isSelect: Boolean, keyword: String, imageUrl: String ->
+                    onSelectButtonClicked(isSelect, keyword, imageUrl)
+                }
+            )
+        }
+
+        repeat(chunkSize - list.size) {
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
+    }
 }
 
 @Composable
@@ -229,13 +251,12 @@ private fun DeleteButton(onDeleteButtonClicked: () -> Unit) {
                 )
         )
     }
-
-
 }
 
 @Composable
 private fun RowScope.FavoriteItem(
     item: FavoriteModel,
+    navController: NavController,
     onSelectButtonClicked: (isSelect: Boolean, keyword: String, imageUrl: String) -> Unit
 ) {
     val borderRadius = dimensionResource(id = R.dimen.image_border_radius)
@@ -246,6 +267,12 @@ private fun RowScope.FavoriteItem(
         else
             Icons.Rounded.Check to Color.White.copy(alpha = 0.8f)
     }
+
+    var isClicked by remember {
+        mutableStateOf(false)
+    }
+
+    val scope = rememberCoroutineScope()
 
     val selectionBackColor = remember(isSelect) {
         item.isSelect = isSelect
@@ -261,7 +288,7 @@ private fun RowScope.FavoriteItem(
             .heightIn(min = 100.dp)
             .padding(4.dp)
     ) {
-        val (imageRef, favoriteButtonRef) = createRefs()
+        val (imageRef, bookmarkButtonRef) = createRefs()
 
         AsyncImage(
             model = item.imageUrl,
@@ -281,6 +308,16 @@ private fun RowScope.FavoriteItem(
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
                 }
+                .clickable {
+                    scope.launch {
+                        if(isClicked) return@launch
+                        isClicked = true
+                        navController.safeNavigate(Routes.ImageViewer.withArgs(item.imageUrl.urlEncode()))
+                        delay(1000)
+                        isClicked = false
+                    }
+
+                }
         )
 
         Box(
@@ -294,7 +331,7 @@ private fun RowScope.FavoriteItem(
                     item.isSelect = isSelect
                     onSelectButtonClicked(isSelect, item.keyword, item.imageUrl)
                 }
-                .constrainAs(favoriteButtonRef) {
+                .constrainAs(bookmarkButtonRef) {
                     end.linkTo(imageRef.end, margin = 8.dp)
                     bottom.linkTo(imageRef.bottom, margin = 8.dp)
                 }
@@ -308,36 +345,6 @@ private fun RowScope.FavoriteItem(
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun DefaultPreview() {
-//    ComposeAppTheme {
-//        val sampleData = mapOf(
-//            "cat" to listOf(
-//                Favorite(1, "cat", "https://example.com/cat1.jpg"),
-//                Favorite(2, "cat", "https://example.com/cat2.jpg")
-//            ),
-//            "dog" to listOf(
-//                Favorite(3, "dog", "https://example.com/dog1.jpg")
-//            )
-//        )
-//        LazyColumn(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(16.dp)
-//        ) {
-//            sampleData.forEach { (keyword, favorites) ->
-//                stickyHeader {
-//                    KeywordHeader(keyword)
-//                }
-//                items(favorites) { favorite ->
-//                    FavoriteItem(favorite)
-//                }
-//            }
-//        }
-//    }
-//}
 
 @Composable
 @Preview(showBackground = true)

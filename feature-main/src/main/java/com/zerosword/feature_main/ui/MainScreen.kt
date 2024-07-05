@@ -42,7 +42,9 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.zerosword.domain.navigation.Routes
 import com.zerosword.feature_main.ui.graph.NavigationGraph
+import com.zerosword.feature_main.ui.graph.safeNavigate
 import com.zerosword.resources.R.*
 import com.zerosword.resources.ui.theme.DarkColorScheme
 import com.zerosword.resources.ui.theme.LightColorScheme
@@ -53,6 +55,7 @@ fun MainScreen(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
 ) {
 
+    val context = LocalContext.current
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val isInEditMode = LocalInspectionMode.current
@@ -81,9 +84,22 @@ fun MainScreen(
                         .background(colorScheme.primary),
                     contentAlignment = Alignment.Center
                 ) {
+
+                    val currentRoute = currentBackStackEntry?.destination?.route ?: Routes.Search.route
+                    val searchTitle = context.getString(string.search_screen_title)
+                    val bookmarkTitle = context.getString(string.bookmark_screen_title)
+                    val imageViewerTitle = context.getString(string.image_viewer_title)
+
+                    val title = when (currentRoute.split('/')[0]) {
+                        Routes.Search.route -> searchTitle
+                        Routes.Bookmark.route -> bookmarkTitle
+                        Routes.ImageViewer.route -> imageViewerTitle
+                        else -> searchTitle
+                    }
+
                     Text(
                         modifier = Modifier,
-                        text = currentBackStackEntry?.destination?.route ?: "",
+                        text = title,
                         style = MaterialTheme.typography.titleMedium.copy(
                             color = colorScheme.onPrimary
                         )
@@ -156,28 +172,47 @@ private fun BottomBar(navController: NavHostController) {
         ) {
             items.forEach { screen ->
 
-                val icon = when (screen) {
-                    searchTitle -> Icons.Rounded.Search
-                    bookmarkTitle -> Icons.Rounded.Favorite
-                    else -> Icons.Rounded.Search
+                val icon: ImageVector
+                val route: String
+                val screenName: String
+
+                when (screen) {
+                    searchTitle -> {
+                        screenName = searchTitle
+                        route = Routes.Search.route
+                        icon = Icons.Rounded.Search
+                    }
+
+                    bookmarkTitle -> {
+                        screenName = bookmarkTitle
+                        route = Routes.Bookmark.route
+                        icon = Icons.Rounded.Favorite
+                    }
+
+                    else -> {
+                        screenName = searchTitle
+                        route = Routes.Search.route
+                        icon = Icons.Rounded.Search
+                    }
                 }
 
                 BottomTabItem(
                     modifier = Modifier,
+                    title = screenName,
                     navController = navController,
-                    destScreen = screen,
+                    destScreen = route,
                     icon = icon
-                ) { navController.navigate(screen) }
+                ) { navController.safeNavigate(route) }
 
             }
         }
     }
-
 }
 
 @Composable
 private fun RowScope.BottomTabItem(
     modifier: Modifier = Modifier,
+    title: String,
     destScreen: String,
     navController: NavHostController,
     icon: ImageVector,
@@ -223,7 +258,7 @@ private fun RowScope.BottomTabItem(
             )
             Spacer(modifier.height(2.dp))
             Text(
-                text = destScreen,
+                text = title,
                 style = MaterialTheme.typography.labelLarge.copy(
                     color = if (isSelected) colorScheme.tertiary else colorScheme.onSecondary
                 )
@@ -250,7 +285,7 @@ private fun MainTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if(darkTheme) DarkColorScheme else LightColorScheme
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {

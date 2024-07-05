@@ -6,9 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.map
 import com.zerosword.data.network.state.NetworkConnection
-import com.zerosword.data.database.entity.FavoriteEntity
 import com.zerosword.domain.entity.FavoriteModel
 import com.zerosword.domain.state.KakaoImageSortState
 import com.zerosword.domain.model.KakaoImageModel.DocumentModel
@@ -28,7 +26,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
