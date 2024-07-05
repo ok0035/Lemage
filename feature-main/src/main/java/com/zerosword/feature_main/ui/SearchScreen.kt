@@ -199,10 +199,11 @@ private fun SearchBar(onChangedKeyword: (query: String) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(modifier = Modifier.width(12.dp))
-            Image(
+            Icon(
                 modifier = Modifier.size(16.dp),
                 imageVector = Icons.Rounded.Search,
-                contentDescription = null
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSecondary
             )
             TextField(
                 value = searchQuery.value,
