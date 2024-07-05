@@ -19,5 +19,7 @@
     <string name="image_viewer_title">Image Viewer</string>
     <string name="empty_result_main_msg">No result.</string>
     <string name="empty_result_sub_msg">Try search another keyword.</string>
+    <string name="added_to_bookmark">Added to bookmark.</string>
+    <string name="deleted_from_bookmark">Deleted from bookmark.</string>
 
 </resources>

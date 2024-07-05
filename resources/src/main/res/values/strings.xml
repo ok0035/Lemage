@@ -19,5 +19,7 @@
     <string name="image_viewer_title">이미지 뷰어</string>
     <string name="empty_result_main_msg">검색 결과가 없습니다.</string>
     <string name="empty_result_sub_msg">다른 키워드로 검색해주세요.</string>
+    <string name="added_to_bookmark">북마크에 추가되었습니다.</string>
+    <string name="deleted_from_bookmark">북마크에서 제거되었습니다.</string>
 
 </resources>

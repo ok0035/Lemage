@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.LoadState
+import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.zerosword.data.network.state.NetworkConnection
@@ -46,6 +48,7 @@ class SearchViewModel @Inject constructor(
     private val _pageSize = 20
     private val _imageSearchResults: MutableStateFlow<PagingData<DocumentModel>> =
         MutableStateFlow(PagingData.empty())
+    private var isInit = false
 
     val toastState: SharedFlow<ToastState> get() = _toastState.asSharedFlow()
     val searchQuery: StateFlow<String> get() = _searchQuery.asStateFlow()
@@ -60,7 +63,7 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch {
             connection.isConnected.collectLatest { isConnected ->
                 _isConnected.value = isConnected
-                if (isConnected) {
+                if (isConnected && isInit) {
                     refreshList()
                         .collect { pagingData ->
                             _imageSearchResults.value = pagingData
@@ -71,13 +74,14 @@ class SearchViewModel @Inject constructor(
 
         viewModelScope.launch {
             searchQuery
-                .debounce(1000)
+                .debounce(if (!isInit) 0 else 1000)
                 .filter { it.isNotEmpty() }
                 .flatMapLatest { query ->
                     _currentQuery = query
                     refreshList(_currentQuery)
                 }
                 .collect { pagingData ->
+                    isInit = true
                     _imageSearchResults.value = pagingData
                 }
         }
@@ -97,7 +101,15 @@ class SearchViewModel @Inject constructor(
         }.cachedIn(viewModelScope)
 
     fun searchImage(query: String) = viewModelScope.launch {
-        _searchQuery.value = query
+        if (query.isEmpty())
+            _imageSearchResults.value = PagingData.empty(
+                sourceLoadStates = LoadStates(
+                    LoadState.NotLoading(true),
+                    LoadState.NotLoading(true),
+                    LoadState.NotLoading(true)
+                )
+            )
+        else _searchQuery.value = query
     }
 
     fun showToast(state: ToastState) = viewModelScope.launch {
