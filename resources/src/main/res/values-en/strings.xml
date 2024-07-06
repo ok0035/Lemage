@@ -28,5 +28,7 @@
     <string name="cancel_button_text">Cancel</string>
     <string name="selected_n_items">%d items have been selected.</string>
     <string name="deleted_n_items_from_bookmark">%d items have been deleted.</string>
+    <string name="how_to_search_image">"1. Image search: Type in the keywords and get the results automatically after 1 second. "</string>
+    <string name="how_to_use_bookmark">"2. Bookmark feature: Bookmark your favorite images to easily find them later. "</string>
 
 </resources>
