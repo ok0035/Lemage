@@ -59,7 +59,6 @@ import coil.compose.AsyncImage
 import com.zerosword.domain.entity.FavoriteModel
 import com.zerosword.domain.extension.urlEncode
 import com.zerosword.domain.navigation.Routes
-import com.zerosword.domain.state.ToastState
 import com.zerosword.domain.state.ToastState.*
 import com.zerosword.feature_main.ui.graph.safeNavigate
 import com.zerosword.feature_main.util.extension.toast

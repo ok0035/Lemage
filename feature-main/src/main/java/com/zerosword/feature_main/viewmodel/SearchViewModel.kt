@@ -39,7 +39,7 @@ class SearchViewModel @Inject constructor(
     private val connection: NetworkConnection,
 ) : ViewModel() {
 
-    private var _currentQuery = "레진 코믹스 로고"
+    private var _currentQuery = ""
     private val _toastState: MutableSharedFlow<ToastState> = MutableSharedFlow(0)
     private val _searchQuery = MutableStateFlow(_currentQuery)
     private var _sortType = KakaoImageSortState.ACCURACY
@@ -101,6 +101,7 @@ class SearchViewModel @Inject constructor(
         }.cachedIn(viewModelScope)
 
     fun searchImage(query: String) = viewModelScope.launch {
+        _searchQuery.value = query
         if (query.isEmpty())
             _imageSearchResults.value = PagingData.empty(
                 sourceLoadStates = LoadStates(
@@ -109,7 +110,7 @@ class SearchViewModel @Inject constructor(
                     LoadState.NotLoading(true)
                 )
             )
-        else _searchQuery.value = query
+//        else _searchQuery.value = query
     }
 
     fun showToast(state: ToastState) = viewModelScope.launch {

@@ -28,5 +28,7 @@
     <string name="cancel_button_text">취소</string>
     <string name="selected_n_items">%d개 항목이 선택되었습니다.</string>
     <string name="deleted_n_items_from_bookmark">%d개 항목이 삭제되었습니다.</string>
+    <string name="how_to_search_image">1. 원하는 키워드를 입력하면 1초 후 자동으로 검색결과를 확인할 수 있어요.</string>
+    <string name="how_to_use_bookmark">2. 마음에 드는 이미지를 북마크에 추가하여 나중에 쉽게 찾아볼 수 있어요.</string>
 
 </resources>

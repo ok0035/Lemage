@@ -1,6 +1,7 @@
 package com.zerosword.feature_main.ui
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -47,6 +49,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -153,6 +156,10 @@ fun SearchScreen(
 
                     }
                 }
+            },
+            onImageListLoaded = {
+                if (viewModel.searchQuery.collectAsState().value.isEmpty() && lazyPagingItems.itemCount == 0) IntroducingScreen()
+                else if (lazyPagingItems.itemCount == 0) EmptyResultScreen()
             }
         )
 
@@ -165,8 +172,9 @@ private fun SearchScreenContent(
     initKeyword: String = "",
     lazyPagingItems: LazyPagingItems<KakaoImageModel.DocumentModel>,
     listState: LazyStaggeredGridState,
-    onChangedKeyword: (query: String) -> Unit,
-    onBindImage: @Composable (imageUrl: String, model: KakaoImageModel.DocumentModel) -> Unit
+    onChangedKeyword: (query: String) -> Unit = {},
+    onBindImage: @Composable (imageUrl: String, model: KakaoImageModel.DocumentModel) -> Unit = { _, _ -> },
+    onImageListLoaded: @Composable () -> Unit = {}
 ) {
 
     Box(
@@ -179,7 +187,9 @@ private fun SearchScreenContent(
             ImageList(
                 lazyPagingItems, listState,
                 onBindImage = onBindImage
-            )
+            ) {
+                onImageListLoaded()
+            }
         }
     }
 }
@@ -254,7 +264,8 @@ private fun SearchBar(initKeyword: String = "", onChangedKeyword: (query: String
 private fun ImageList(
     lazyPagingItems: LazyPagingItems<KakaoImageModel.DocumentModel>,
     listState: LazyStaggeredGridState,
-    onBindImage: @Composable (imageUrl: String, model: KakaoImageModel.DocumentModel) -> Unit
+    onBindImage: @Composable (imageUrl: String, model: KakaoImageModel.DocumentModel) -> Unit,
+    onComplete: @Composable () -> Unit
 ) {
 
     LazyVerticalStaggeredGrid(
@@ -274,7 +285,7 @@ private fun ImageList(
         }
     }
 
-    if (lazyPagingItems.itemCount == 0) EmptyResultScreen()
+    onComplete()
 }
 
 @Composable
@@ -375,6 +386,44 @@ fun EmptyResultScreen() {
         mainMessage = context.getString(R.string.empty_result_main_msg),
         subMessage = context.getString(R.string.empty_result_sub_msg),
     )
+}
+
+@Composable
+private fun IntroducingScreen() {
+
+    val context = LocalContext.current
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            AsyncImage(
+                modifier = Modifier.size(200.dp),
+                model = mipmap.round_app_icon,
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.height(50.dp))
+            Text(
+                modifier = Modifier.width(250.dp),
+                text = context.getString(R.string.how_to_search_image),
+                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSecondary),
+                textAlign = TextAlign.Start
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                modifier = Modifier.width(250.dp),
+                text = context.getString(R.string.how_to_use_bookmark),
+                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSecondary),
+                textAlign = TextAlign.Start
+            )
+        }
+    }
 }
 
 
