@@ -8,20 +8,40 @@
 ![](https://img.shields.io/badge/DI-Hilt-Green)
 
 <div style="display: flex; justify-content: space-between;">
-  <img src="https://github.com/ok0035/Lemage/assets/19370688/e5e3e29b-a379-4b34-957f-d34332b5a9a6" style="width: 45%;" />
-  <img src="https://github.com/ok0035/Lemage/assets/19370688/ac7387c2-8b37-4898-8fa1-d7ec7b58b62c" style="width: 45%;" />
+  <img src="https://github.com/ok0035/Lemage/assets/19370688/e5e3e29b-a379-4b34-957f-d34332b5a9a6" style="width: 22%;" />
+  <img src="https://github.com/ok0035/Lemage/assets/19370688/ac7387c2-8b37-4898-8fa1-d7ec7b58b62c" style="width: 22%;" />
+  <img src="https://github.com/ok0035/Lemage/assets/19370688/01289032-50df-4035-b84a-8609c46fd190" style="width: 22%;" />
+  <img src="https://github.com/ok0035/Lemage/assets/19370688/6ca2fb9b-2879-4bc2-b941-cb39a264ac04" style="width: 22%;" />
 </div>
+
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/ok0035/Lemage/assets/19370688/841fc31c-6b55-4f85-be92-8437b3482238" style="width: 44%;" />
+  <img src="https://github.com/ok0035/Lemage/assets/19370688/d08aca85-6c41-48ed-90c7-4208ed968dad" style="width: 44%;" />
+</div>
+
+
 
 ## 소개
 이 어플리케이션의 이름은 레미지입니다. 
 이 앱은 이미지 검색 및 북마크 기능을 제공합니다.
 클린 아키텍처와 MVVM을 기반으로 만들어졌으며 모든 화면은 Jetpack Compose로 구현했습니다.
 
+
 ### [주요 기능] 
 - **이미지 검색**: 원하는 키워드를 입력하면 1초 후 자동으로 검색 결과를 확인할 수 있습니다.
-- **북마크 기능**: 마음에 드는 이미지를 북마크에 추가하여 나중에 쉽게 찾아볼 수 있습니다.
+- **북마크 기능**: 마음에 드는 이미지를 북마크에 추가하여 키워드별로 쉽게 찾아볼 수 있습니다.
 - **다국어 지원**: 언어 설정에 따라 한글과 영어를 지원합니다.
-- **다크 테마 대응** : 라이트/다크 모드에 따라 앱의 테마가 변경됩니다.
+- **다크 테마 대응**: 라이트/다크 모드에 따라 앱의 테마가 변경됩니다.
+- **가로 모드 대응**: 가로 모드시 타이틀을 보이지 않도록 하고, 더 많은 개수의 이미지를 볼 수 있습니다.
+
+
+## 권장 버전 및 스펙
+
+- **Minimum SDK Version**: 26
+- **Compile SDK Version**: 34
+- **Target SDK Version**: 34
+- **Java Version**: 11
+
 
 ## 설치
 앱을 실행시키기 위해선 반드시 안드로이드 스튜디오가 필요합니다.
@@ -34,7 +54,7 @@
 
 ## 아키텍처 개요
 
-"Lemage" 프로젝트는 MVVM 패턴과 Clean Architecture 원칙을 결합하여 설계되었습니다. 이 아키텍처는 모듈화, 테스트 용이성, 유지 보수성에 중점을 두고 있습니다.
+"Lemage" 프로젝트는 MVVM 패턴과 Clean Architecture 원칙을 결합하여 설계되었습니다.
 
 ### MVVM (Model-View-ViewModel)
 
@@ -55,7 +75,7 @@
 2. **ViewModel**은 **Repository**에 의존합니다.
 3. **Repository**는 **Data Source**에 의존합니다.
 
-이 아키텍처는 각 레이어를 독립적으로 유지하고, 쉽게 교체할 수 있도록 설계되었습니다. 이를 통해 테스트와 유지 보수가 용이합니다.
+
 
 ## 프로젝트 구조
 
@@ -423,7 +443,8 @@ fun NavigationGraph(
 예를 들어 해당 프로젝트의 검색 탭과 북마크 탭을 왔다갔다 할 때 차이가 발생하게 됩니다.</br>
 `LocalContext`를 따를 경우 탭을 이미지 검색 후 북마크 탭을 갔다가 돌아온 이후에도 결과가 남아있는 반면,</br>
 `NavBackStackEntry`를 `Owner`로 설정했을 경우 검색탭으로 돌아왔을 때 화면이 초기화 되게 됩니다.</br>
-해당 프로젝트를 작업할 때에도 어떻게 할지 고민을 많이 했는데 프로젝트 특성 상 `NavBackStackEntry`를 `Owner`로 설정했습니다.</br></br>
+해당 프로젝트를 작업할 때에도 어떻게 할지 고민을 많이 했는데 탭이 두 개 밖에 존재하지 않고</br>
+번갈아가며 볼 일이 많을 것으로 예상되어 Local Context를 Owner로 설정했습니다.</br></br>
 
 
 | 비교 항목 | NavBackStackEntry를 Owner로 설정한 경우 | NavBackStackEntry를 Owner로 설정하지 않은 경우 (기본적으로 LocalContext가 Owner가 됨) |
