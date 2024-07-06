@@ -1,5 +1,6 @@
 package com.zerosword.feature_main.ui.search
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -108,6 +110,7 @@ fun SearchScreen(
             )
             if (isLoading) LoadingScreen()
         }
+
         else -> NetworkErrorScreen()
     }
 }
@@ -124,7 +127,7 @@ private fun EmptyResultScreen() {
 @Composable
 private fun IntroducingScreen() {
     val context = LocalContext.current
-
+    val configuration = LocalConfiguration.current
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -132,11 +135,12 @@ private fun IntroducingScreen() {
             .background(MaterialTheme.colorScheme.background)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            AsyncImage(
-                modifier = Modifier.size(200.dp),
-                model = mipmap.round_app_icon,
-                contentDescription = null
-            )
+            if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+                AsyncImage(
+                    modifier = Modifier.size(200.dp),
+                    model = mipmap.round_app_icon,
+                    contentDescription = null
+                )
             Spacer(modifier = Modifier.height(50.dp))
             Text(
                 modifier = Modifier.width(250.dp),

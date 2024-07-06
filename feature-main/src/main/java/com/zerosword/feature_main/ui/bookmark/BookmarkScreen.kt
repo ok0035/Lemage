@@ -1,5 +1,6 @@
 package com.zerosword.feature_main.ui.bookmark
 
+import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -8,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +32,7 @@ fun BookmarkScreen(
 ) {
 
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
     val isInEdit = LocalInspectionMode.current
     var isExistDeleteList by remember { mutableStateOf(false) }
     val isConnected = remember { mutableStateOf(false) }
@@ -48,6 +51,7 @@ fun BookmarkScreen(
                             selectedItemCount
                         )
                     }
+
                     NO_DELETABLE_ITEMS -> context.getString(R.string.no_deletable_items)
                     PAGING_ERROR -> context.getString(R.string.paging_error_msg)
                     ADDED_TO_BOOKMARK -> context.getString(R.string.added_to_bookmark)
@@ -78,11 +82,16 @@ fun BookmarkScreen(
     }
 
     if (isConnected.value && !isInEdit) {
+        val chunkSize = when (configuration.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> 3
+            Configuration.ORIENTATION_LANDSCAPE -> 8
+            else -> 3
+        }
         BookmarkScreenContent(
             navController = navController,
             favoritesByKeyword = viewModel.favoritesByKeyword.collectAsState().value,
             listState = viewModel.listState,
-            chunkSize = 3,
+            chunkSize = chunkSize,
             onDeleteButtonClicked = {
                 viewModel.deleteItems()
             },

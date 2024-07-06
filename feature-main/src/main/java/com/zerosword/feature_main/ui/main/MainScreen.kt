@@ -1,6 +1,7 @@
 package com.zerosword.feature_main.ui.main
 
 import android.app.Activity
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalView
@@ -47,6 +49,7 @@ fun MainScreen(
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val isInEditMode = LocalInspectionMode.current
+    val configuration = LocalConfiguration.current
 
     MainTheme(isDarkTheme) {
         Surface(
@@ -57,26 +60,33 @@ fun MainScreen(
                 val (topBarRef, contentsRef, bottomBarRef) = createRefs()
                 val topBarHeight = dimensionResource(id = dimen.top_bar_height)
 
-                MainTopBar(
-                    modifier = Modifier.constrainAs(topBarRef) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        top.linkTo(parent.top)
-                        width = Dimension.fillToConstraints
-                        height = Dimension.value(topBarHeight)
-                    },
-                    currentRoute = currentBackStackEntry?.destination?.route ?: Routes.Search.route
-                )
+                if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+                    MainTopBar(
+                        modifier = Modifier.constrainAs(topBarRef) {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            top.linkTo(parent.top)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.value(topBarHeight)
+                        },
+                        currentRoute = currentBackStackEntry?.destination?.route
+                            ?: Routes.Search.route
+                    )
 
                 Box(
-                    modifier = Modifier.constrainAs(contentsRef) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        top.linkTo(topBarRef.bottom)
-                        bottom.linkTo(bottomBarRef.top)
-                        width = Dimension.fillToConstraints
-                        height = Dimension.fillToConstraints
-                    }
+                    modifier = Modifier
+                        .constrainAs(contentsRef) {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            when (configuration.orientation) {
+                                Configuration.ORIENTATION_PORTRAIT -> top.linkTo(topBarRef.bottom)
+                                Configuration.ORIENTATION_LANDSCAPE -> top.linkTo(parent.top)
+                                else -> top.linkTo(topBarRef.bottom)
+                            }
+                            bottom.linkTo(bottomBarRef.top)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.fillToConstraints
+                        }
                         .background(colorScheme.background),
                 ) {
                     if (!isInEditMode) {
