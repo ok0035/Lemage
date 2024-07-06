@@ -15,8 +15,8 @@ import androidx.compose.ui.platform.LocalContext
 import com.zerosword.resources.R
 
 @Composable
-fun NetworkErrorScreen() {
-    val context = LocalContext.current
+fun NotificationScreen(mainMessage: String, subMessage: String) {
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -25,11 +25,11 @@ fun NetworkErrorScreen() {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = context.getString(R.string.unstable_network_msg),
+                text = mainMessage,
                 style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onPrimary)
             )
             Text(
-                text = context.getString(R.string.auto_refresh_connected),
+                text = subMessage,
                 style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSecondary)
             )
         }
@@ -37,24 +37,10 @@ fun NetworkErrorScreen() {
 }
 
 @Composable
-fun EmptyResultScreen() {
+fun NetworkErrorScreen() {
     val context = LocalContext.current
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-            Text(
-                text = context.getString(R.string.empty_result_main_msg),
-                style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onPrimary)
-            )
-            Text(
-                text = context.getString(R.string.empty_result_sub_msg),
-                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSecondary)
-            )
-        }
-    }
+    NotificationScreen(
+        mainMessage = context.getString(R.string.unstable_network_msg),
+        subMessage = context.getString(R.string.auto_refresh_connected)
+    )
 }
