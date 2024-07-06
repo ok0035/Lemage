@@ -73,7 +73,7 @@ class SearchViewModel @Inject constructor(
 
         viewModelScope.launch {
             searchQuery
-                .debounce(if (!isInit) 0 else 1000)
+                .debounce(1000)
                 .filter { it.isNotEmpty() }
                 .flatMapLatest { query ->
                     _currentQuery = query
