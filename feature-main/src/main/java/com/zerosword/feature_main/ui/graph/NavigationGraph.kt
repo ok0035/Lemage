@@ -6,7 +6,9 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -24,6 +26,9 @@ fun NavigationGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController,
 ) {
+    //탭을 이동한 뒤에도 결과가 남아있도록 하기 위해 LocalContext를 Owner로 설정
+    val searchViewModel: SearchViewModel = hiltViewModel()
+    val bookmarkViewModel: BookmarkViewModel = hiltViewModel()
 
     NavHost(
         modifier = modifier,
@@ -32,11 +37,9 @@ fun NavigationGraph(
     ) {
 
         composable(route = Routes.Search.route) {
-            val searchViewModel: SearchViewModel = hiltViewModel(it)
             SearchScreen(searchViewModel, navController)
         }
         composable(route = Routes.Bookmark.route) {
-            val bookmarkViewModel: BookmarkViewModel = hiltViewModel(it)
             BookmarkScreen(
                 bookmarkViewModel,
                 navController

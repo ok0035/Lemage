@@ -4,7 +4,6 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.skydoves.sandwich.getOrNull
 import com.skydoves.sandwich.message
-import com.skydoves.sandwich.onFailure
 import com.skydoves.sandwich.suspendOnFailure
 import com.zerosword.data.network.response.toDomainModel
 import com.zerosword.data.services.KakaoService
