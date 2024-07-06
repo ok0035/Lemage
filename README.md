@@ -74,9 +74,9 @@ lemage/
 
 
 | 카테고리               | 라이브러리                                                                                    | 설명                                                    |
-| ------------------ | ---------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| **UI**             | [Compose](https://developer.android.com/jetpack/compose)                                 | Jetpack Compose를 사용한 UI 구성 라이브러리.                  |
-|                    | [Material3](https://material.io/develop/android)                                         | Material Design 3에서 제공하는 테마 및 아이콘을 활용.               |
+| ------------------ | ---------------------------------------------------------------------------------------- | -----------------------------------------------------      |
+| **UI**             | [Compose](https://developer.android.com/jetpack/compose)                                 | Jetpack Compose를 사용한 UI 구성 라이브러리.                     |
+|                    | [Material3](https://material.io/develop/android)                                         | Material Design 3에서 제공하는 테마 및 아이콘을 활용.              |
 | **Image**          | [Coil](https://coil-kt.github.io/coil/)                                                  | 안정적인 이미지 로딩 및 표시를 위해 Coil 사용.                     |
 | **DI**             | [Hilt](https://developer.android.com/training/dependency-injection/hilt-android)         | 의존성 주입을 쉽게 관리하기 위한 라이브러리.                             |
 | **AAC**            | [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel)        | UI와 비즈니스 로직의 분리를 위해 AAC ViewModel 사용.              |
@@ -323,6 +323,121 @@ class BookmarkViewModel @Inject constructor(
 | 중복 호출 | 같은 값이 중복 호출되지 않음 | 같은 값이 여러 번 방출될 수 있음 |
 | 주요 용도 | 상태를 저장하고 UI를 변경하는 데 사용 | 결과값에 따라 이벤트를 처리하는 데 사용 |
 | LiveData와의 유사성 | LiveData와 유사하며 Coroutine 친화적 | 이벤트를 처리하는 데 특화 |
+
+## Android ViewModel
+
+### Owner
+`Owner`는 `ViewModel`의 생명 주기를 관리하는 객체를 의미합니다. `ViewModel`은 특정 생명 주기 범위 내에서 데이터를 저장하고 관리하는데,
+이 생명 주기 범위를 설정하는 것이 `Owner`의 역할입니다. 예를 들어, `Activity`나 `Fragment`는 각각의 생명 주기를 가지고 있으며, 이들 중 하나가 `ViewModel`의 `Owner`가 됩니다.</br>
+</br>
+ViewModel의 owner를 설정하는 이유는 화면 전환이나 구성 변경 (예: 화면 회전) 시에도 `ViewModel`의 데이터가 유지되도록 하기 위함입니다. 
+`Owner`로 설정된 객체의 생명 주기 동안 `ViewModel`은 재사용되며, `Owner`가 파괴될 때 `ViewModel`도 함께 파괴됩니다.
+
+### Compose Navigation과 Dagger Hilt를 같이 사용하는 경우의 Owner 설정
+
+`Compose Navigation`과 `Dagger Hilt`를 함께 사용할 때, `NavBackStackEntry`를 `Owner`로 사용하여 `ViewModel`이 특정 화면의 생명 주기를 따르도록 할 수 있습니다. 이를 통해 화면 이동 시에도 `ViewModel`의 데이터가 유지됩니다.
+`Hilt`를 사용하여 `ViewModel` 인스턴스를 가져올 때, `hiltViewModel()` 함수를 사용할 수 있습니다. 이 함수는 현재 `NavBackStackEntry`를 `Owner`로 사용하여 `ViewModel`을 생성합니다.
+
+다음은 `Compose Navigation`과 `Dagger Hilt`를 함께 사용하는 자세한 예제입니다.
+`Compose Navigation`에서 `hiltViewModel()` 함수를 사용할 때 `Owner`를 설정하는 방법은 두 가지입니다.</br></br>
+
+**1. `NavBackStackEntry`를 `owner`로 설정하는 경우**</br></br>
+
+```kotlin
+@Composable  
+fun NavigationGraph(  
+    modifier: Modifier = Modifier,  
+    navController: NavHostController,  
+) {  
+    
+    NavHost(  
+        modifier = modifier,  
+        navController = navController,  
+        startDestination = Routes.Search.route,  
+    ) {  
+  
+        composable(route = Routes.Search.route) {  
+            val searchViewModel: SearchViewModel = hiltViewModel(it) //navBackStackEntry 로 owner 설정
+            SearchScreen(searchViewModel, navController)  
+        }  
+        composable(route = Routes.Bookmark.route) {  
+            val bookmarkViewModel: BookmarkViewModel = hiltViewModel(it) //navBackStackEntry 로 owner 설정
+            BookmarkScreen(  
+                bookmarkViewModel,  
+                navController  
+            )  
+        }  
+        ...  
+	}
+}
+```
+
+- `ViewModel`의 생명주기는 해당 `NavBackStackEntry`의 생명주기를 따르게 됩니다.
+- 특정 화면에 대한 `ViewModel` 인스턴스가 해당 화면의 `NavBackStackEntry`와 연결됩니다.
+- 화면의 구성이 변경(ex. 화면 회전)되어도 `NavBackStackEntry`가 유지되는 한 `ViewModel` 인스턴스는 유지됩니다.
+- 하지만 화면이 완전히 Destroy 되고 다시 생성될 경우 (다른 화면으로 이동 후 돌아왔을 때)</br>
+`NavBackStackEntry`가 다시 생성되고, 그에 따라 새로운 `ViewModel` 인스턴스가 생성됩니다.</br></br>
+
+
+
+**2. `NavBackStackEntry`를 `Owner`로 설정하지 않는 경우 (기본적으로 `LocalContext`가 `Owner`가 됩니다.)**</br></br>
+
+```kotlin
+@Composable  
+fun NavigationGraph(  
+    modifier: Modifier = Modifier,  
+    navController: NavHostController,  
+) {  
+
+    val searchViewModel: SearchViewModel = hiltViewModel() //기본적으로 LocalContext가 Owner가 됨
+    val bookmarkViewModel: BookmarkViewModel = hiltViewModel() //기본적으로 LocalContext가 Owner가 됨
+    
+    NavHost(  
+        modifier = modifier,  
+        navController = navController,  
+        startDestination = Routes.Search.route,  
+    ) {  
+  
+        composable(route = Routes.Search.route) {  
+            SearchScreen(searchViewModel, navController)  
+        }  
+        composable(route = Routes.Bookmark.route) {  
+            BookmarkScreen(  
+                bookmarkViewModel,  
+                navController  
+            )  
+        }  
+        ...
+	}
+}
+```
+
+
+- `NavBackStackEntry`를 `Owner`로 설정하지 않는 경우 `ViewModel`의 생명주기는 `LocalContext`의 생명주기를 따르게 됩니다.
+- 일반적으로 `LocalContext`는 `Activity`나 `Fragment`의 생명주기를 따릅니다.
+- `NavBackStackEntry`를 `Owner`로 했을 때와 마찬가지로 화면의 구성이 변경(ex. 화면 회전)되어도 `ViewModel` 인스턴스는 유지됩니다.
+- `NavBackStackEntry`를 `Owner`로 했을 때와 다른 점은 다른 화면으로 이동 후 돌아왔을 때에도 `ViewModel`의 생명주기는 `LocalContext`를 따르므로 `ViewModel` 인스턴스가 그대로 유지됩니다.
+
+
+	
+예를 들어 해당 프로젝트의 검색 탭과 북마크 탭을 왔다갔다 할 때 차이가 발생하게 됩니다.</br>
+`LocalContext`를 따를 경우 탭을 이미지 검색 후 북마크 탭을 갔다가 돌아온 이후에도 결과가 남아있는 반면,</br>
+`NavBackStackEntry`를 `Owner`로 설정했을 경우 검색탭으로 돌아왔을 때 화면이 초기화 되게 됩니다.</br>
+해당 프로젝트를 작업할 때에도 어떻게 할지 고민을 많이 했는데 프로젝트 특성 상 `NavBackStackEntry`를 `Owner`로 설정했습니다.</br></br>
+
+
+| 비교 항목 | NavBackStackEntry를 Owner로 설정한 경우 | NavBackStackEntry를 Owner로 설정하지 않은 경우 (기본적으로 LocalContext가 Owner가 됨) |
+|-----------|-------------------------------------------|---------------------------------------------------------------------------------------|
+| ViewModel의 생명 주기 | 해당 NavBackStackEntry의 생명 주기를 따름 | LocalContext의 생명 주기를 따름 (일반적으로 Activity나 Fragment) |
+| ViewModel 인스턴스 연결 | 특정 화면의 NavBackStackEntry와 연결됨 | Activity나 Fragment와 연결됨 |
+| 화면 구성 변경 (예: 화면 회전) | NavBackStackEntry가 유지되는 한 ViewModel 인스턴스 유지 | ViewModel 인스턴스 유지 |
+| 화면 이동 후 돌아올 때 | 화면이 완전히 Destroy되고 다시 생성되므로 새로운 ViewModel 인스턴스 생성 | ViewModel 인스턴스가 그대로 유지됨 |
+| 탭 간 이동 시 | 검색 탭에서 북마크 탭으로 이동 후 다시 검색 탭으로 돌아오면 화면이 초기화됨 | 검색 탭에서 북마크 탭으로 이동 후 다시 검색 탭으로 돌아와도 결과가 남아 있음 |
+| 사용 예 | 특정 화면에 대한 독립적인 ViewModel 인스턴스가 필요할 때 유용 | 여러 화면에서 동일한 ViewModel 인스턴스를 공유할 때 유용 |
+
+
+
+
 
 ## 라이선스
 이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [LICENSE](./LICENSE) 파일을 참고하세요.
