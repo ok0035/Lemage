@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
-import com.zerosword.domain.extension.urlDecode
+import com.zerosword.feature_main.util.extension.urlDecode
 
 @Composable
 fun FullScreenImageScreen(encodedImageUrl: String) {

@@ -1,4 +1,4 @@
-package com.zerosword.domain.extension
+package com.zerosword.feature_main.util.extension
 
 import java.net.URLDecoder
 import java.net.URLEncoder

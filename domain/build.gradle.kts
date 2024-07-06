@@ -63,17 +63,11 @@ dependencies {
             Libs.CORE_KTX,
             Libs.HILT,
             PAGING,
-            Libs.ROOM_RUNTIME,
-            Libs.ROOM_KTX,
-            Libs.ROOM_PAGING
         )
     )
 
     kapts(
-        listOf(
-            Libs.HILT_COMPILER,
-            Libs.ROOM_COMPILER
-        )
+        listOf(Libs.HILT_COMPILER,)
     )
 
     testImplementations(

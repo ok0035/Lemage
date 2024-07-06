@@ -1,6 +1,5 @@
 package com.zerosword.feature_main.viewmodel
 
-import android.util.Log
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,6 +42,7 @@ class SearchViewModel @Inject constructor(
     private val _toastState: MutableSharedFlow<ToastState> = MutableSharedFlow(0)
     private val _searchQuery = MutableStateFlow(_currentQuery)
     private var _sortType = KakaoImageSortState.ACCURACY
+    private val sortType get() = _sortType.value
     private var _isConnected = MutableStateFlow(true)
     private val _startPage = 1
     private val _pageSize = 20
@@ -52,7 +52,6 @@ class SearchViewModel @Inject constructor(
 
     val toastState: SharedFlow<ToastState> get() = _toastState.asSharedFlow()
     val searchQuery: StateFlow<String> get() = _searchQuery.asStateFlow()
-    val sortType get() = _sortType.value
     val listState: LazyStaggeredGridState = LazyStaggeredGridState()
     val isConnected: StateFlow<Boolean> get() = _isConnected.asStateFlow()
     val imageSearchResults: StateFlow<PagingData<DocumentModel>>
@@ -125,12 +124,6 @@ class SearchViewModel @Inject constructor(
         favoriteRepository.delete(keyword, imageUrl)
     }
 
-    fun allFavoriteList() = viewModelScope.launch {
-        favoriteRepository.getAllFavorites().forEachIndexed { index, favoriteEntity ->
-            Log.d("BOOKMARK", "$index ${favoriteEntity.imageUrl}")
-        }
-    }
-
     fun isFavorite(keyword: String, imageUrl: String, favoriteState: Boolean): StateFlow<Boolean> {
         val isFavorite = MutableStateFlow(favoriteState)
         viewModelScope.launch {
@@ -139,11 +132,4 @@ class SearchViewModel @Inject constructor(
         return isFavorite
     }
 
-    fun isFavorite(imageUrl: String, favoriteState: Boolean): StateFlow<Boolean> {
-        val isFavorite = MutableStateFlow(favoriteState)
-        viewModelScope.launch {
-            isFavorite.value = favoriteRepository.isFavorite(imageUrl)
-        }
-        return isFavorite
-    }
 }

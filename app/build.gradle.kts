@@ -73,27 +73,10 @@ dependencies {
             project(":feature-main"),
             project(":resources"),
             platform(Libs.COMPOSE_BOM),
-            platform(Libs.OK_HTTP_CLIENT_BOM),
             Libs.CORE_KTX,
-            Libs.LIFECYCLE_RUNTIME_KTX,
-            Libs.LIFECYCLE_FOR_COMPOSE,
-            Libs.LIFECYCLE_SERVICE,
-            Libs.VIEWMODEL,
-            Libs.VIEWMODEL_FOR_COMPOSE,
-            Libs.VIEWMODEL_FOR_SAVED_STATE,
-            Libs.RETROFIT,
-            Libs.RETROFIT_GSON_CONVERTER,
-            Libs.OK_HTTP_CLIENT,
-            Libs.OK_HTTP_INTERCEPTOR,
-            Libs.SANDWICH,
-            Libs.SANDWICH_FOR_RETROFIT,
             Libs.ACTIVITY_COMPOSE,
             Libs.COMPOSE_UI,
-            Libs.COMPOSE_UI_GRAPHICS,
-            Libs.COMPOSE_UI_TOOLING_PREVIEW,
             Libs.MATERIAL3,
-            Libs.GLIDE,
-            Libs.GLIDE_FOR_COMPOSE,
             Libs.HILT
         )
     )
@@ -102,7 +85,6 @@ dependencies {
         listOf(
             Libs.HILT_COMPILER,
             Libs.LIFECYCLE_COMPILER,
-            Libs.GLIDE
         )
     )
     kaptTests(listOf(Libs.HILT_COMPILER))
@@ -110,7 +92,6 @@ dependencies {
     testImplementations(
         listOf(
             Libs.JUNIT,
-            Libs.OK_HTTP_MOCK_WEB_SERVER,
             Libs.HILT_ANDROID_TEST
         )
     )

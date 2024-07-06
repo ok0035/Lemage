@@ -8,8 +8,6 @@ import com.zerosword.domain.entity.FavoriteModel
 import com.zerosword.domain.reporitory.FavoriteRepository
 import com.zerosword.domain.state.ToastState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -20,7 +18,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
     private val favoriteRepository: FavoriteRepository,
@@ -49,7 +46,7 @@ class BookmarkViewModel @Inject constructor(
         }
     }
 
-    fun showToast(state: ToastState) = viewModelScope.launch {
+    private fun showToast(state: ToastState) = viewModelScope.launch {
         _toastState.emit(state)
     }
 

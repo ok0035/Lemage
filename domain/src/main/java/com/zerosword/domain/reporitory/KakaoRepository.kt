@@ -2,7 +2,6 @@ package com.zerosword.domain.reporitory
 
 import androidx.paging.PagingData
 import com.zerosword.domain.model.KakaoImageModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
 interface KakaoRepository {
