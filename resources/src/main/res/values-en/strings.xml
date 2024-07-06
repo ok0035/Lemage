@@ -21,5 +21,7 @@
     <string name="empty_result_sub_msg">Try search another keyword.</string>
     <string name="added_to_bookmark">Added to bookmark.</string>
     <string name="deleted_from_bookmark">Deleted from bookmark.</string>
+    <string name="no_bookmark_screen_main_msg">No bookmark.</string>
+    <string name="no_bookmark_screen_sub_msg">Press the heart button in the search tab to save it to your bookmarks.</string>
 
 </resources>

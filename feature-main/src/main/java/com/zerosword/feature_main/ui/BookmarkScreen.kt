@@ -18,7 +18,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -39,8 +41,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key.Companion.D
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,90 +72,121 @@ fun BookmarkScreen(
     navController: NavController = rememberNavController()
 ) {
 
-    val headerHeight = dimensionResource(id = R.dimen.bookmark_header_height)
-    val favoritesGroupedByKeyword by viewModel.favoritesByKeyword.collectAsState()
-    var isExistDeleteList by remember {
-        mutableStateOf(false)
-    }
+    val isInEdit = LocalInspectionMode.current
+    var isExistDeleteList by remember { mutableStateOf(false) }
     val isConnected = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    val chunkSize = 3
 
-    LaunchedEffect(Unit) {
-        viewModel.deleteItemList.collectLatest {
-            isExistDeleteList = it.isNotEmpty()
+    if (!isInEdit) {
+        LaunchedEffect(Unit) {
+            viewModel.deleteItemList.collectLatest {
+                isExistDeleteList = it.isNotEmpty()
+            }
+        }
+
+        LaunchedEffect(viewModel.favoritesByKeyword.collectAsState()) {
+            viewModel.loadFavoritesByKeyword()
+        }
+
+        LaunchedEffect(viewModel.isConnected) {
+            viewModel.isConnected.collectLatest {
+                isConnected.value = it
+            }
         }
     }
 
-    LaunchedEffect(favoritesGroupedByKeyword) {
-        viewModel.loadFavoritesByKeyword()
-    }
-
-    LaunchedEffect(viewModel.isConnected) {
-        viewModel.isConnected.collectLatest {
-            isConnected.value = it
-        }
-    }
-
-    if (isConnected.value) {
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 12.dp)
-        ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = viewModel.listState
-            ) {
-                favoritesGroupedByKeyword.forEach { (keyword, favorites) ->
-                    stickyHeader { Header(keyword = keyword) }
-                    items(favorites.chunked(chunkSize)) { rowFavorites ->
-
-                        ChunkedFavoriteItems(
-                            chunkSize = chunkSize,
-                            list = rowFavorites,
-                            navController = navController
-                        ) { isSelect, keyword, imageUrl ->
-                            scope.launch {
-                                viewModel.findItem(keyword, imageUrl).collectLatest { model ->
-                                    model?.let {
-                                        model.isSelect = isSelect
-                                        if (isSelect) viewModel.addItemToDeleteList(model)
-                                        else viewModel.deleteItemToDeleteList(model)
-                                    }
-                                }
-                            }
+    if (isConnected.value && !isInEdit) {
+        BookmarkScreenContent(
+            navController = navController,
+            favoritesByKeyword = viewModel.favoritesByKeyword.collectAsState().value,
+            listState = viewModel.listState,
+            isExistDeleteList = isExistDeleteList,
+            chunkSize = 3,
+            onDeleteButtonClicked = {
+                viewModel.deleteItems()
+            },
+            onBindImage = { isSelect, keyword, imageUrl ->
+                scope.launch {
+                    viewModel.findItem(keyword, imageUrl).collectLatest { model ->
+                        model?.let {
+                            model.isSelect = isSelect
+                            if (isSelect) viewModel.addItemToDeleteList(model)
+                            else viewModel.deleteItemToDeleteList(model)
                         }
                     }
                 }
             }
-
-            if (isExistDeleteList)
-                Box(
-                    modifier = Modifier
-                        .constrainAs(createRef()) {
-                            top.linkTo(parent.top)
-                            end.linkTo(parent.end, 4.dp)
-                            height = Dimension.value(headerHeight)
-                            width = Dimension.wrapContent
-                        }
-                        .wrapContentWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    DeleteButton {
-                        viewModel.deleteItems()
-                    }
-                }
-
-        }
+        )
     }
 
     if (!isConnected.value) NetworkErrorScreen()
+    if (!isInEdit) {
+        val favoritesByKeyword by viewModel.favoritesByKeyword.collectAsState()
+        if(favoritesByKeyword.isEmpty()) EmptyBookmarkScreen()
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun BookmarkScreenContent(
+    favoritesByKeyword: Map<String, List<FavoriteModel>> = mapOf(Pair("", listOf())),
+    listState: LazyListState = rememberLazyListState(),
+    chunkSize: Int = 3,
+    navController: NavController,
+    isExistDeleteList: Boolean = false,
+    onBindImage: (isSelect: Boolean, keyword: String, imageUrl: String) -> Unit,
+    onDeleteButtonClicked: () -> Unit
+) {
+
+    val headerHeight = dimensionResource(id = R.dimen.bookmark_header_height)
+
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 12.dp)
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = listState
+        ) {
+            favoritesByKeyword.forEach { (keyword, favorites) ->
+                stickyHeader { Header(keyword = keyword) }
+                items(favorites.chunked(chunkSize)) { rowFavorites ->
+
+                    ChunkedFavoriteItems(
+                        chunkSize = chunkSize,
+                        list = rowFavorites,
+                        navController = navController
+                    ) { isSelect, keyword, imageUrl ->
+                        onBindImage(isSelect, keyword, imageUrl)
+                    }
+                }
+            }
+        }
+
+        if (isExistDeleteList)
+            Box(
+                modifier = Modifier
+                    .constrainAs(createRef()) {
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end, 4.dp)
+                        height = Dimension.value(headerHeight)
+                        width = Dimension.wrapContent
+                    }
+                    .wrapContentWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                DeleteButton {
+                    onDeleteButtonClicked()
+                }
+            }
+
+    }
 }
 
 @Composable
 private fun ChunkedFavoriteItems(
-    chunkSize: Int,
+    chunkSize: Int = 3,
     list: List<FavoriteModel>,
     navController: NavController,
     onSelectButtonClicked: (isSelect: Boolean, keyword: String, imageUrl: String) -> Unit
@@ -310,7 +345,7 @@ private fun RowScope.FavoriteItem(
                 }
                 .clickable {
                     scope.launch {
-                        if(isClicked) return@launch
+                        if (isClicked) return@launch
                         isClicked = true
                         navController.safeNavigate(Routes.ImageViewer.withArgs(item.imageUrl.urlEncode()))
                         delay(1000)
@@ -346,8 +381,31 @@ private fun RowScope.FavoriteItem(
     }
 }
 
+
+@Composable
+fun EmptyBookmarkScreen() {
+    val context = LocalContext.current
+    NotificationScreen(
+        mainMessage = context.getString(R.string.no_bookmark_screen_main_msg),
+        subMessage = context.getString(R.string.no_bookmark_screen_sub_msg)
+    )
+}
+
 @Composable
 @Preview(showBackground = true)
 private fun BookmarkScreenPreview() {
-    BookmarkScreen()
+    BookmarkScreenContent(
+        favoritesByKeyword = mapOf(
+            Pair(
+                "테스트", listOf(
+                    FavoriteModel("테스트", imageUrl = "")
+                )
+            )
+        ),
+        navController = rememberNavController(),
+        onDeleteButtonClicked = {},
+        onBindImage = { isSelect, keyword, imageUrl ->
+
+        }
+    )
 }

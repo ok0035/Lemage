@@ -67,6 +67,7 @@ import com.zerosword.domain.state.ToastState
 import com.zerosword.feature_main.ui.graph.safeNavigate
 import com.zerosword.feature_main.util.extension.toast
 import com.zerosword.feature_main.viewmodel.SearchViewModel
+import com.zerosword.resources.R
 import com.zerosword.resources.R.*
 import com.zerosword.resources.ui.compose.LoadingScreen
 import kotlinx.coroutines.delay
@@ -95,8 +96,10 @@ fun SearchScreen(
         viewModel.toastState.collect {
 
             val toastMessage = when (it) {
-                ToastState.API_ERROR -> context.getText(string.network_error_msg).toString()
-                ToastState.PAGING_ERROR -> context.getText(string.paging_error_msg).toString()
+                ToastState.API_ERROR -> context.getString(string.network_error_msg)
+                ToastState.PAGING_ERROR -> context.getString(string.paging_error_msg)
+                ToastState.ADDED_TO_BOOKMARK -> context.getString(string.added_to_bookmark)
+                ToastState.DELETED_FROM_BOOKMARK -> context.getString(string.deleted_from_bookmark)
                 else -> ""
             }
             if (toastMessage.isNotEmpty()) context.toast(toastMessage)
@@ -143,12 +146,14 @@ fun SearchScreen(
                         true -> {
                             viewModel.addToFavoriteItem(keyword, url)
                             Log.d(tag, "북마크 추가 -> $url")
+                            viewModel.showToast(ToastState.ADDED_TO_BOOKMARK)
                             viewModel.allFavoriteList()
                         }
 
                         false -> {
                             viewModel.deleteFavoriteItem(keyword, url)
                             Log.d(tag, "북마크 삭제 -> $url")
+                            viewModel.showToast(ToastState.DELETED_FROM_BOOKMARK)
                             viewModel.allFavoriteList()
                         }
 
@@ -368,6 +373,16 @@ private fun SearchItem(
         }
     }
 }
+
+@Composable
+fun EmptyResultScreen() {
+    val context = LocalContext.current
+    NotificationScreen(
+        mainMessage = context.getString(R.string.empty_result_main_msg),
+        subMessage = context.getString(R.string.empty_result_sub_msg),
+    )
+}
+
 
 @Composable
 @Preview(showBackground = true)

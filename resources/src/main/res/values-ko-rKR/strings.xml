@@ -21,5 +21,7 @@
     <string name="empty_result_sub_msg">다른 키워드로 검색해주세요.</string>
     <string name="added_to_bookmark">북마크에 추가되었습니다.</string>
     <string name="deleted_from_bookmark">북마크에서 제거되었습니다.</string>
+    <string name="no_bookmark_screen_main_msg">북마크가 비어있습니다.</string>
+    <string name="no_bookmark_screen_sub_msg">검색 탭에서 하트 버튼을 눌러 북마크에 저장해보세요.</string>
 
 </resources>
