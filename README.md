@@ -8,20 +8,41 @@
 ![](https://img.shields.io/badge/DI-Hilt-Green)
 
 <div style="display: flex; justify-content: space-between;">
-  <img src="https://github.com/ok0035/Lemage/assets/19370688/e5e3e29b-a379-4b34-957f-d34332b5a9a6" style="width: 45%;" />
-  <img src="https://github.com/ok0035/Lemage/assets/19370688/ac7387c2-8b37-4898-8fa1-d7ec7b58b62c" style="width: 45%;" />
+  <img src="https://github.com/ok0035/Lemage/assets/19370688/e5e3e29b-a379-4b34-957f-d34332b5a9a6" style="width: 22%;" />
+  <img src="https://github.com/ok0035/Lemage/assets/19370688/ac7387c2-8b37-4898-8fa1-d7ec7b58b62c" style="width: 22%;" />
+  <img src="https://github.com/ok0035/Lemage/assets/19370688/01289032-50df-4035-b84a-8609c46fd190" style="width: 22%;" />
+  <img src="https://github.com/ok0035/Lemage/assets/19370688/6ca2fb9b-2879-4bc2-b941-cb39a264ac04" style="width: 22%;" />
 </div>
+
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/ok0035/Lemage/assets/19370688/841fc31c-6b55-4f85-be92-8437b3482238" style="width: 44%;" />
+  <img src="https://github.com/ok0035/Lemage/assets/19370688/d08aca85-6c41-48ed-90c7-4208ed968dad" style="width: 44%;" />
+</div>
+
+
 
 ## 소개
 이 어플리케이션의 이름은 레미지입니다. 
 이 앱은 이미지 검색 및 북마크 기능을 제공합니다.
 클린 아키텍처와 MVVM을 기반으로 만들어졌으며 모든 화면은 Jetpack Compose로 구현했습니다.
 
+
 ### [주요 기능] 
 - **이미지 검색**: 원하는 키워드를 입력하면 1초 후 자동으로 검색 결과를 확인할 수 있습니다.
-- **북마크 기능**: 마음에 드는 이미지를 북마크에 추가하여 나중에 쉽게 찾아볼 수 있습니다.
+- **북마크 기능**: 마음에 드는 이미지를 북마크에 추가하여 키워드별로 쉽게 찾아볼 수 있습니다.
 - **다국어 지원**: 언어 설정에 따라 한글과 영어를 지원합니다.
-- **다크 테마 대응** : 라이트/다크 모드에 따라 앱의 테마가 변경됩니다.
+- **자세히 보기**: 선택 모드가 아닌 경우 이미지를 터치하여 크게볼 수 있는 기능을 제공합니다.
+- **다크 테마 대응**: 라이트/다크 모드에 따라 앱의 테마가 변경됩니다.
+- **가로 모드 대응**: 가로 모드시 타이틀을 보이지 않도록 하고, 더 많은 개수의 이미지를 볼 수 있습니다.
+
+
+## 권장 버전 및 스펙
+
+- **Minimum SDK Version**: 26
+- **Compile SDK Version**: 34
+- **Target SDK Version**: 34
+- **Java Version**: 11
+
 
 ## 설치
 앱을 실행시키기 위해선 반드시 안드로이드 스튜디오가 필요합니다.
@@ -34,7 +55,7 @@
 
 ## 아키텍처 개요
 
-"Lemage" 프로젝트는 MVVM 패턴과 Clean Architecture 원칙을 결합하여 설계되었습니다. 이 아키텍처는 모듈화, 테스트 용이성, 유지 보수성에 중점을 두고 있습니다.
+"Lemage" 프로젝트는 MVVM 패턴과 Clean Architecture 원칙을 결합하여 설계되었습니다.
 
 ### MVVM (Model-View-ViewModel)
 
@@ -55,7 +76,7 @@
 2. **ViewModel**은 **Repository**에 의존합니다.
 3. **Repository**는 **Data Source**에 의존합니다.
 
-이 아키텍처는 각 레이어를 독립적으로 유지하고, 쉽게 교체할 수 있도록 설계되었습니다. 이를 통해 테스트와 유지 보수가 용이합니다.
+
 
 ## 프로젝트 구조
 
@@ -423,7 +444,8 @@ fun NavigationGraph(
 예를 들어 해당 프로젝트의 검색 탭과 북마크 탭을 왔다갔다 할 때 차이가 발생하게 됩니다.</br>
 `LocalContext`를 따를 경우 탭을 이미지 검색 후 북마크 탭을 갔다가 돌아온 이후에도 결과가 남아있는 반면,</br>
 `NavBackStackEntry`를 `Owner`로 설정했을 경우 검색탭으로 돌아왔을 때 화면이 초기화 되게 됩니다.</br>
-해당 프로젝트를 작업할 때에도 어떻게 할지 고민을 많이 했는데 프로젝트 특성 상 `NavBackStackEntry`를 `Owner`로 설정했습니다.</br></br>
+해당 프로젝트를 작업할 때에도 어떻게 할지 고민을 많이 했는데 탭이 두 개 밖에 존재하지 않고</br>
+번갈아가며 볼 일이 많을 것으로 예상되어 Local Context를 Owner로 설정했습니다.</br></br>
 
 
 | 비교 항목 | NavBackStackEntry를 Owner로 설정한 경우 | NavBackStackEntry를 Owner로 설정하지 않은 경우 (기본적으로 LocalContext가 Owner가 됨) |
@@ -436,7 +458,119 @@ fun NavigationGraph(
 | 사용 예 | 특정 화면에 대한 독립적인 ViewModel 인스턴스가 필요할 때 유용 | 여러 화면에서 동일한 ViewModel 인스턴스를 공유할 때 유용 |
 
 
+## Android Paging3
 
+
+### `PagingSource` 클래스
+
+`PagingSource` 클래스는 데이터 페이징을 처리하는 기본 단위입니다. 다양한 데이터 소스(ex. 네트워크, 데이터베이스)에서 데이터를 페이지 단위로 로드하기 위해 사용됩니다.</br>
+`PagingSource`를 사용하면 큰 데이터 세트를 작은 청크로 나눠 효율적으로 로드할 수 있습니다.
+
+`PagingSource`는 다음과 같은 두 가지 제네릭 타입을 사용합니다:
+- `Key`: 페이지를 식별하는 데 사용되는 키의 타입입니다. 일반적으로 페이지 번호나 데이터의 ID를 사용합니다.
+	- 해당 프로젝트에선 페이지 번호를 사용했습니다.
+- `Value`: 로드된 데이터의 타입입니다. 예를 들어, `KakaoImageModel` 객체가 될 수 있습니다.
+	- 해당 프로젝트에선 Kakao 이미지 모델을 사용했습니다.
+
+</br></br>
+---
+### `load` 메서드
+
+`load` 메서드는 데이터를 로드하는 로직을 정의합니다. 이 메서드는 `LoadParams<Key>`를 인자로 받아 데이터를 로드하고, `LoadResult<Key, Value>`를 반환합니다.
+
+#### `LoadParams<Key>`
+
+`LoadParams`는 `load` 메서드에 전달되는 파라미터로, 다음과 같은 속성을 가집니다:
+- `key`: 현재 페이지를 식별하는 키입니다. 첫 로드 시에는 `null`일 수 있습니다.
+- `loadSize`: 로드할 데이터의 크기입니다. 일반적으로 페이지당 항목 수를 나타냅니다.
+- `placeholdersEnabled`: 플레이스홀더 사용 여부를 나타내는 부울 값입니다.
+
+#### `LoadResult<Key, Value>`
+
+`LoadResult`는 `load` 메서드의 결과를 나타내며, 다음 두 가지 서브클래스가 있습니다:
+- `LoadResult.Page<Key, Value>`: 로드된 데이터와 이전/다음 페이지 키를 포함합니다.
+- `LoadResult.Error`: 로드 중 발생한 에러를 포함합니다.
+
+</br></br>
+---
+### `getRefreshKey` 메서드
+
+
+`getRefreshKey` 메서드는 데이터 새로고침 시 사용되는 키를 반환합니다. 이 메서드는 일반적으로 현재 상태에서 적절한 페이지 키를 계산하기 위해 사용됩니다.
+
+#### 파라미터: `PagingState<Key, Value>`
+
+`getRefreshKey` 메서드의 파라미터는 `PagingState<Key, Value>` 객체입니다. `PagingState`는 현재 페이징 상태를 나타내며, 다음과 같은 속성을 가집니다:
+- `pages`: 로드된 페이지 목록입니다. 각 페이지는 `LoadResult.Page<Key, Value>` 객체입니다.
+- `anchorPosition`: 현재 표시되는 항목의 위치입니다. `null`일 수 있습니다.
+- `config`: `PagingConfig` 객체로, 페이징 구성 정보를 포함합니다.
+- `itemCount`: 현재 로드된 총 항목 수입니다.
+
+#### 리턴 값: `Key?`
+
+`getRefreshKey` 메서드는 새로고침 시 사용할 키를 반환합니다. 이 키는 일반적으로 `null`이 아닌 값을 반환해야 합니다. 반환된 키는 새로고침 작업을 시작하는 위치를 결정하는 데 사용됩니다.
+
+</br></br>
+---
+### 예제 코드
+
+다음은 해당 프로젝트에 실제 적용된 `PagingSource`와 `getRefreshKey` 코드입니다.
+
+```kotlin
+class KakaoImagePagingSource(
+    private val kakaoService: KakaoService,
+    private val query: String,
+    private val sort: String,
+    private val onError: (errorMsg: String) -> Unit = {}
+) : PagingSource<Int, KakaoImageModel.DocumentModel>() {
+
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, KakaoImageModel.DocumentModel> {
+        return try {
+            val page = params.key ?: 1
+            val response = kakaoService.searchImage(
+                query = query,
+                sort = sort,
+                page = page,
+                size = params.loadSize,
+            ).suspendOnFailure {
+                onError(this.message())
+            }
+
+            val model = response.getOrNull()?.toDomainModel()
+                ?: return LoadResult.Error(Exception("Empty response"))
+
+            LoadResult.Page(
+                data = model.documents,
+                prevKey = if (page == 1) null else page - 1,
+                nextKey = if (model.meta?.isEnd == true) null else page + 1
+            )
+
+        } catch (e: Exception) {
+            LoadResult.Error(e)
+        }
+    }
+
+    override fun getRefreshKey(state: PagingState<Int, KakaoImageModel.DocumentModel>): Int? {
+        return state.anchorPosition?.let { anchorPosition ->
+            val anchorPage = state.closestPageToPosition(anchorPosition)
+            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
+        }
+    }
+}
+```
+
+### 예제 설명
+
+1. **load 메서드**:
+    - `params.key`가 `null`이면 첫 페이지(1)를 로드합니다.
+    - API 호출을 통해 데이터를 로드합니다.
+    - 로드된 데이터를 `LoadResult.Page` 객체로 반환합니다. 이전 페이지 키(`prevKey`)와 다음 페이지 키(`nextKey`)를 설정합니다.
+    - 에러가 발생하면 `LoadResult.Error`를 반환합니다.
+
+2. **getRefreshKey 메서드**:
+    - `state.anchorPosition`을 사용하여 현재 데이터의 중앙 위치를 찾습니다.
+    - `state.closestPageToPosition(anchorPosition)`를 사용하여 해당 위치에 가장 가까운 페이지를 가져옵니다.
+    - 이전 키(`prevKey`)가 있으면 `prevKey + 1`을 반환하고, 그렇지 않으면 다음 키(`nextKey - 1`)를 반환합니다.
 
 
 ## 라이선스
