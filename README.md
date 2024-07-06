@@ -1,8 +1,11 @@
 
 # 레미지
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![](https://img.shields.io/badge/Flatform-Android-yellowgreen)</br>
+![](https://img.shields.io/badge/Language-Kotlin-blue)</br>
+![](https://img.shields.io/badge/Architecture-MVVM-skyblue) ![](https://img.shields.io/badge/-CleanArchitecture-skyblue)</br>
+![](https://img.shields.io/badge/Network-Retrofit-red)</br>
+![](https://img.shields.io/badge/DI-Hilt-Green)
 
 <div style="display: flex; justify-content: space-between;">
   <img src="https://github.com/ok0035/Lemage/assets/19370688/e5e3e29b-a379-4b34-957f-d34332b5a9a6" style="width: 45%;" />
@@ -11,11 +14,14 @@
 
 ## 소개
 이 어플리케이션의 이름은 레미지입니다. 
-이 앱은 이미지 검색 및 북마크 기능을 제공합니다. 
+이 앱은 이미지 검색 및 북마크 기능을 제공합니다.
+클린 아키텍처와 MVVM을 기반으로 만들어졌으며 모든 화면은 Jetpack Compose로 구현했습니다.
 
-[주요 기능] 
+### [주요 기능] 
 - **이미지 검색**: 원하는 키워드를 입력하면 1초 후 자동으로 검색 결과를 확인할 수 있습니다.
 - **북마크 기능**: 마음에 드는 이미지를 북마크에 추가하여 나중에 쉽게 찾아볼 수 있습니다.
+- **다국어 지원**: 언어 설정에 따라 한글과 영어를 지원합니다.
+- **다크 테마 대응** : 라이트/다크 모드에 따라 앱의 테마가 변경됩니다.
 
 ## 설치
 앱을 실행시키기 위해선 반드시 안드로이드 스튜디오가 필요합니다.
@@ -67,20 +73,22 @@ lemage/
 ### 주요 기술 스택
 
 
-| 카테고리           | 라이브러리             | 설명                                               |
-|--------------------|------------------------|----------------------------------------------------|
-| **UI**             | [Compose](https://developer.android.com/jetpack/compose) | Jetpack Compose를 사용한 UI 구성.                    |
-|                    | [Material3](https://material.io/develop/android) | Material Design 3 적용.                             |
-| **Image**          | [Coil](https://coil-kt.github.io/coil/) | 이미지 로딩 및 표시.                                |
-| **DI**             | [Hilt](https://developer.android.com/training/dependency-injection/hilt-android) | 의존성 주입 관리.                                    |
-| **Architecture**   | [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) | UI 관련 데이터 관리.                                 |
-| **Local Database** | [Room](https://developer.android.com/training/data-storage/room) | 로컬 데이터베이스 저장 및 관리.                      |
-| **Network**        | [Retrofit](https://square.github.io/retrofit/) | 네트워크 통신 처리.                                 |
-|                    | [okHttpClient](https://square.github.io/okhttp/) | HTTP 요청 관리.                                      |
-|                    | [Sandwich](https://github.com/skydoves/Sandwich) | 네트워크 응답 처리 도구.                             |
-| **Data parsing**   | [Gson](https://github.com/google/gson) | JSON 데이터 파싱.                                    |
-| **Async**          | [Coroutine Flow](https://developer.android.com/kotlin/flow) | 비동기 데이터 스트림 처리.                           |
-| **Pagination**     | [Paging3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) | 페이징된 데이터 로드 및 표시.                        |
+| 카테고리               | 라이브러리                                                                                    | 설명                                                    |
+| ------------------ | ---------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| **UI**             | [Compose](https://developer.android.com/jetpack/compose)                                 | Jetpack Compose를 사용한 UI 구성 라이브러리.                  |
+|                    | [Material3](https://material.io/develop/android)                                         | Material Design 3에서 제공하는 테마 및 아이콘을 활용.               |
+| **Image**          | [Coil](https://coil-kt.github.io/coil/)                                                  | 안정적인 이미지 로딩 및 표시를 위해 Coil 사용.                     |
+| **DI**             | [Hilt](https://developer.android.com/training/dependency-injection/hilt-android)         | 의존성 주입을 쉽게 관리하기 위한 라이브러리.                             |
+| **AAC**            | [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel)        | UI와 비즈니스 로직의 분리를 위해 AAC ViewModel 사용.              |
+| **Local Database** | [Room](https://developer.android.com/training/data-storage/room)                         | 북마크 기능을 구현하기 위한 경량 ORM(객체 관계 매핑) 데이터베이스.         |
+| **Network**        | [Retrofit](https://square.github.io/retrofit/)                                           | 간편한 API 호출 및 비동기 네트워크 통신에 용이한 라이브러리.                |
+|                    | [okHttpClient](https://square.github.io/okhttp/)                                         | HTTP 요청을 효율적으로 관리하기 위한 클라이언트.                      |
+|                    | [Sandwich](https://github.com/skydoves/Sandwich)                                         | 네트워크 응답을 간편하게 처리하기 위한 라이브러리.                      |
+| **Data parsing**   | [Gson](https://github.com/google/gson)                                                   | JSON 데이터를 객체로 파싱하기 위한 라이브러리.                          |
+| **Async**          | [Coroutine Flow](https://developer.android.com/kotlin/flow)                              | 비동기 데이터 스트림을 처리하기 위한 Kotlin Coroutine 기반 라이브러리.     |
+| **Pagination**     | [Paging3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) | 페이징된 데이터를 효율적으로 로드하고 표시하기 위한 라이브러리.             |
+
+
 
 ## Kotlin Coroutine Flow
 
@@ -206,12 +214,115 @@ fun main() = runBlocking {
 구독자 2: 3
 ```
 
-요약
+**요약**
 | 특성 | HotFlow | ColdFlow |
 |------|---------|----------|
 | 활성화 시점 | 항상 활성 | 구독 시 활성 |
 | 상태 유지 | 최신 상태 유지 | 구독 시마다 새로 시작 |
 | 구독자 간 독립성 | 없음 | 있음 |
+
+### StateFlow와 SharedFlow
+StateFlow와 SharedFlow는 모두 HotFlow입니다. 두 Flow의 가장 큰 차이는 상태의 보존 여부로써 StateFlow는 객체 생성시 초기값을 반드시 지정해야하며,</br>
+SharedFlow는 초기값 없이 객체 생성이 가능합니다. StateFlow는 LiveData와 유사하지만 Coroutine 친화적이라는 특징이 있습니다.<br>
+LiveData와 마찬가지로 상태를 저장하고 관찰하는 용도로 사용되며, 같은 값이 중복 호출되지 않습니다.</br>
+</br>
+반면에 SharedFlow는 상태를 저장하지 않으며 같은 값일지라도 여러번 방출될 수 있다는 특정이 있습니다.</br>
+이런 특징 때문에 StateFlow는 상태를 저장하고 UI를 변경하는데 많이 사용되는 반면,</br>
+SharedFlow는 토스트 메시지 처럼 결과값에 따라 이벤트를 처리해야할 때 자주 사용됩니다. 아래는 예제 코드입니다.<br>
+
+```kotlin
+package com.zerosword.feature_main.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.zerosword.domain.entity.FavoriteModel
+import com.zerosword.domain.reporitory.FavoriteRepository
+import com.zerosword.domain.state.ToastState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class BookmarkViewModel @Inject constructor(
+    private val favoriteRepository: FavoriteRepository
+) : ViewModel() {
+
+    // HotFlow: StateFlow 사용
+    private var _isConnected = MutableStateFlow(true)
+    val isConnected: StateFlow<Boolean> get() = _isConnected.asStateFlow()
+
+    // HotFlow: SharedFlow 사용
+    private val _toastState: MutableSharedFlow<ToastState> = MutableSharedFlow(0)
+    val toastState: SharedFlow<ToastState> get() = _toastState.asSharedFlow()
+
+    //...
+
+    init {
+        viewModelScope.launch {
+            connection.isConnected.collectLatest { isConnected ->
+                _isConnected.value = isConnected
+                if (isConnected) {
+                    loadFavoritesByKeyword()
+                }
+            }
+        }
+    }
+}
+```
+
+### StateFlow 사용 예제 (HotFlow)
+
+```kotlin
+    LaunchedEffect(viewModel.isConnected) {
+        viewModel.isConnected.collectLatest {
+            isConnected.value = it
+        }
+    }
+
+    //... 인터넷 연결 상태에 따른 UI 변경
+
+    if (!isConnected.value) NetworkErrorScreen()
+```
+
+### SharedFlow 사용 예제 (HotFlow)
+
+```kotlin
+    LaunchedEffect(Unit) {
+        viewModel.toastState.collect {
+
+            //SharedFlow에서 받은 State에 따른 토스트 메시지 출력
+            val toastMessage = when (it) {
+                DELETED_SELECTED_ITEM_FROM_BOOKMARK -> {
+                    val selectedItemCount = viewModel.deleteItemList.value.size
+                    String.format(
+                        context.getString(R.string.deleted_n_items_from_bookmark),
+                        selectedItemCount
+                    )
+                }
+                NO_DELETABLE_ITEMS -> context.getString(R.string.no_deletable_items)
+                PAGING_ERROR -> context.getString(R.string.paging_error_msg)
+                ADDED_TO_BOOKMARK -> context.getString(R.string.added_to_bookmark)
+                DELETED_FROM_BOOKMARK -> context.getString(R.string.deleted_from_bookmark)
+                else -> ""
+            }
+            if (toastMessage.isNotEmpty()) context.toast(toastMessage)
+        }
+
+    }
+```
+
+**요약**
+| 특성 | StateFlow | SharedFlow |
+|------|------------|------------|
+| 초기값 | 초기값을 반드시 지정해야 함 | 초기값 없이 객체 생성 가능 |
+| 상태 보존 | 상태를 보존함 | 상태를 보존하지 않음 |
+| 중복 호출 | 같은 값이 중복 호출되지 않음 | 같은 값이 여러 번 방출될 수 있음 |
+| 주요 용도 | 상태를 저장하고 UI를 변경하는 데 사용 | 결과값에 따라 이벤트를 처리하는 데 사용 |
+| LiveData와의 유사성 | LiveData와 유사하며 Coroutine 친화적 | 이벤트를 처리하는 데 특화 |
 
 ## 라이선스
 이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [LICENSE](./LICENSE) 파일을 참고하세요.
