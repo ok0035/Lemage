@@ -25,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -63,7 +62,7 @@ import coil.compose.AsyncImage
 import com.zerosword.domain.extension.urlEncode
 import com.zerosword.domain.model.KakaoImageModel
 import com.zerosword.domain.navigation.Routes
-import com.zerosword.domain.state.ToastState
+import com.zerosword.domain.state.ToastState.*
 import com.zerosword.feature_main.ui.graph.safeNavigate
 import com.zerosword.feature_main.util.extension.toast
 import com.zerosword.feature_main.viewmodel.SearchViewModel
@@ -96,10 +95,10 @@ fun SearchScreen(
         viewModel.toastState.collect {
 
             val toastMessage = when (it) {
-                ToastState.API_ERROR -> context.getString(string.network_error_msg)
-                ToastState.PAGING_ERROR -> context.getString(string.paging_error_msg)
-                ToastState.ADDED_TO_BOOKMARK -> context.getString(string.added_to_bookmark)
-                ToastState.DELETED_FROM_BOOKMARK -> context.getString(string.deleted_from_bookmark)
+                API_ERROR -> context.getString(string.network_error_msg)
+                PAGING_ERROR -> context.getString(string.paging_error_msg)
+                ADDED_TO_BOOKMARK -> context.getString(string.added_to_bookmark)
+                DELETED_FROM_BOOKMARK -> context.getString(string.deleted_from_bookmark)
                 else -> ""
             }
             if (toastMessage.isNotEmpty()) context.toast(toastMessage)
@@ -111,7 +110,7 @@ fun SearchScreen(
         val loadState = lazyPagingItems.loadState.refresh
         isLoading.value = loadState is LoadState.Loading
         if (loadState is LoadState.Error) {
-            viewModel.showToast(ToastState.PAGING_ERROR)
+            viewModel.showToast(PAGING_ERROR)
         }
     }
 
@@ -139,22 +138,17 @@ fun SearchScreen(
                     isFavoriteState = isFavoriteState,
                     navController = navController
                 ) { isFavorite, keyword, url ->
-                    val tag = "BOOKMARK"
 
                     when (isFavorite) {
 
                         true -> {
                             viewModel.addToFavoriteItem(keyword, url)
-                            Log.d(tag, "북마크 추가 -> $url")
-                            viewModel.showToast(ToastState.ADDED_TO_BOOKMARK)
-                            viewModel.allFavoriteList()
+                            viewModel.showToast(ADDED_TO_BOOKMARK)
                         }
 
                         false -> {
                             viewModel.deleteFavoriteItem(keyword, url)
-                            Log.d(tag, "북마크 삭제 -> $url")
-                            viewModel.showToast(ToastState.DELETED_FROM_BOOKMARK)
-                            viewModel.allFavoriteList()
+                            viewModel.showToast(DELETED_FROM_BOOKMARK)
                         }
 
                     }
