@@ -245,11 +245,12 @@ fun main() = runBlocking {
 | 구독자 간 독립성 | 없음 | 있음 |
 
 ### StateFlow와 SharedFlow
-StateFlow와 SharedFlow는 모두 HotFlow입니다. 두 Flow의 가장 큰 차이는 상태의 보존 여부로써 StateFlow는 객체 생성시 초기값을 반드시 지정해야하며,</br>
+StateFlow와 SharedFlow는 모두 HotFlow입니다.</br>
+두 Flow의 가장 큰 차이는 상태의 보존 여부로써 StateFlow는 객체 생성시 초기값을 반드시 지정해야하며,</br>
 SharedFlow는 초기값 없이 객체 생성이 가능합니다. StateFlow는 LiveData와 유사하지만 Coroutine 친화적이라는 특징이 있습니다.<br>
 LiveData와 마찬가지로 상태를 저장하고 관찰하는 용도로 사용되며, 같은 값이 중복 호출되지 않습니다.</br>
 </br>
-반면에 SharedFlow는 상태를 저장하지 않으며 같은 값일지라도 여러번 방출될 수 있다는 특정이 있습니다.</br>
+반면에 SharedFlow는 상태를 저장하지 않으며 같은 값일지라도 여러번 방출될 수 있다는 특징이 있습니다.</br>
 이런 특징 때문에 StateFlow는 상태를 저장하고 UI를 변경하는데 많이 사용되는 반면,</br>
 SharedFlow는 토스트 메시지 처럼 결과값에 따라 이벤트를 처리해야할 때 자주 사용됩니다. 아래는 예제 코드입니다.<br>
 
